@@ -1,3 +1,3 @@
-const Page = () => <h1>hello</h1>
+const Page = () => <h1 className="text-4xl">hello</h1>
 
 export default Page
