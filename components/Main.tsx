@@ -1,12 +1,18 @@
 import { atom, selector, useRecoilValue } from "recoil"
+import Papa from "papaparse"
 
 const inputState = selector<null | any[][]>({
   key: "input",
   get: ({ get }) => {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve([[1, 2, 3]])
-      }, 10)
+      Papa.parse("http://localhost:8080/100.csv", {
+        download: true,
+        error: reject,
+        complete: (results) => {
+          // @ts-ignore
+          resolve(results.data)
+        },
+      })
     })
   },
 })
@@ -25,6 +31,7 @@ const outputState = selector<any[][]>({
   key: "output",
   get: ({ get }) => {
     const input = get(inputState)
+    if (!input) return null
     const filters = [...get(filterState)]
     let ret = input
     while (filters.length) {
@@ -62,15 +69,16 @@ const Main = () => {
         <h1 className="text-xl">Data</h1>
         <table className="text-sm w-full">
           <tbody>
-            {output.map((row, i) => (
-              <tr key={i}>
-                {row.map((cell, j) => (
-                  <td key={j} className="border b-1 px-1">
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
+            {output &&
+              output.map((row, i) => (
+                <tr key={i}>
+                  {row.map((cell, j) => (
+                    <td key={j} className="border b-1 px-1">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
