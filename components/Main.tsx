@@ -8,6 +8,7 @@ const inputState = selector<null | any[][]>({
       Papa.parse("http://localhost:8080/100.csv", {
         download: true,
         error: reject,
+        worker: true,
         complete: (results) => {
           // @ts-ignore
           resolve(results.data)
