@@ -15,6 +15,7 @@
 ## Roadmap
 
 1. [x] Base project with Tailwind, Next.js
+1. [x] Auto-deploy to csvhacker.statico.io
 1. [ ] Load CSV data from file quickly and responsively
 1. [ ] Configurable filters - head, tail
 1. [ ] Serialize filters to URL
@@ -35,4 +36,3 @@
 1. [ ] Stats at the bottom?
 1. [ ] Raw data tab
 1. [ ] Test with various data sources
-1. [ ] Auto-deploy to GitHub pages
