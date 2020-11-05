@@ -19,8 +19,8 @@
 1. [x] Load CSV data from URL
 1. [x] Load CSV data from file quickly and responsively
 1. [x] Filter basics: toolbox & drag and drop
-1. [ ] Configurable filters - head, tail
 1. [ ] Serialize filters to URL
+1. [ ] Configurable filters - head, tail
 1. [ ] Input options
 1. [ ] Filters: find, exclude
 1. [ ] Save to CSV
