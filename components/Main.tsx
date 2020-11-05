@@ -1,4 +1,4 @@
-import { atom, selector, useRecoilValue } from "recoil"
+import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
 import Papa from "papaparse"
 import {
   DragDropContext,
@@ -50,6 +50,9 @@ const outputState = selector<any[][]>({
         case "head":
           ret = ret.slice(0, filter.count)
           break
+        case "tail":
+          ret = ret.slice(ret.length - filter.count)
+          break
         default:
           throw new Error(`Unknown filter type: ${filter.type}`)
       }
@@ -73,12 +76,41 @@ const getStyle = (
 
 const Filters = () => {
   const filters = useRecoilValue(filterState)
+  const setFilters = useSetRecoilState(filterState)
+
+  const addFilter = (type: string, index: number) => {
+    const f = [...filters]
+    f.splice(index, 0, { type, count: 5 })
+    setFilters(f)
+  }
+
+  const moveFilter = (from: number, to: number) => {
+    const f = [...filters]
+    const [removed] = f.splice(from, 1)
+    f.splice(to, 0, removed)
+    setFilters(f)
+  }
+
+  const deleteFilter = (index: number) => {
+    const f = [...filters]
+    f.splice(index, 1)
+    setFilters(f)
+  }
+
   const onDragEnd: OnDragEndResponder = ({
     draggableId,
     source,
     destination,
   }) => {
-    console.log("XXX", "onDragEnd", draggableId, source, destination)
+    if (destination?.droppableId === "filters") {
+      if (source.droppableId === "toolbox") {
+        addFilter(draggableId, destination.index)
+      } else {
+        moveFilter(source.index, destination.index)
+      }
+    } else if (source.droppableId === "filters") {
+      deleteFilter(source.index)
+    }
   }
 
   return (
