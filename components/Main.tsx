@@ -57,7 +57,7 @@ const inputConfigState = atom<{ url?: string; file?: File }>({
   ],
 })
 
-const inputState = selector<null | any[][]>({
+const inputState = selector<any[][]>({
   key: "input",
   get: ({ get }) => {
     const { url, file } = get(inputConfigState)
@@ -240,6 +240,7 @@ const Filters = () => {
 }
 
 const Main = () => {
+  const input = useRecoilValue(inputState)
   const output = useRecoilValue(outputState)
 
   return (
@@ -250,6 +251,10 @@ const Main = () => {
       </div>
       <div>
         <h1 className="text-xl">Data</h1>
+        <div>
+          Input: {input.length.toLocaleString()} rows | Output:{" "}
+          {output.length.toLocaleString()} rows
+        </div>
         <table className="text-sm w-full">
           <tbody>
             {output &&
