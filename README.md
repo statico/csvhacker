@@ -37,3 +37,10 @@
 1. [ ] Stats at the bottom?
 1. [ ] Raw data tab
 1. [ ] Test with various data sources
+
+## To Fix Later
+
+- Next.js experimental mode
+- Experimental `react` and `react-dom` deps
+- Recoil.js UNSTABLE usage
+- Recoil.js effects requires setTimeout() in initializer

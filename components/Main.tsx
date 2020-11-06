@@ -27,12 +27,47 @@ const inputState = selector<null | any[][]>({
   },
 })
 
+const getUrlState = (): any => {
+  if (!process.browser || !document.location.hash) return {}
+  try {
+    return JSON.parse(decodeURI(document.location.hash.substr(1))) || {}
+  } catch (err) {
+    console.error("Could not parse state from URL")
+    return {}
+  }
+}
+
+const setUrlState = (state: any): void => {
+  if (!process.browser) return
+  const url = new URL(document.location.href)
+  url.hash = JSON.stringify(state)
+  history.pushState(null, "", url.toString())
+}
+
 const filterState = atom<any[]>({
   key: "filters",
   default: [
     {
       type: "head",
       count: 10,
+    },
+  ],
+  effects_UNSTABLE: [
+    ({ setSelf, onSet }) => {
+      onSet((filters) => {
+        setUrlState({ ...getUrlState(), filters })
+      })
+
+      const read = () => {
+        const { filters } = getUrlState()
+        if (filters) setSelf(filters)
+      }
+      setTimeout(read, 0) // TODO: Why doesn't read() just work?
+
+      window.addEventListener("hashchange", read)
+      return () => {
+        window.removeEventListener("hashchange", read)
+      }
     },
   ],
 })
