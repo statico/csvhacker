@@ -10,23 +10,6 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd"
 
-const inputState = selector<null | any[][]>({
-  key: "input",
-  get: ({ get }) => {
-    return new Promise((resolve, reject) => {
-      Papa.parse("http://localhost:8080/10k.csv", {
-        download: true,
-        error: reject,
-        worker: true,
-        complete: (results) => {
-          // @ts-ignore
-          resolve(results.data)
-        },
-      })
-    })
-  },
-})
-
 const getUrlState = (): any => {
   if (!process.browser || !document.location.hash) return {}
   try {
@@ -43,6 +26,55 @@ const setUrlState = (state: any): void => {
   url.hash = JSON.stringify(state)
   history.pushState(null, "", url.toString())
 }
+
+const inputConfigState = atom<{ url?: string; file?: File }>({
+  key: "inputConfig",
+  default: {},
+  effects_UNSTABLE: [
+    ({ setSelf, onSet }) => {
+      // @ts-ignore
+      onSet(({ url }) => {
+        const state = { ...getUrlState() }
+        if (url) {
+          state.url = url
+        } else {
+          delete state.url
+        }
+        setUrlState(state)
+      })
+
+      const read = () => {
+        const { url } = getUrlState()
+        if (url) setSelf({ url })
+      }
+      setTimeout(read, 0) // TODO: Why doesn't read() just work?
+
+      window.addEventListener("hashchange", read)
+      return () => {
+        window.removeEventListener("hashchange", read)
+      }
+    },
+  ],
+})
+
+const inputState = selector<null | any[][]>({
+  key: "input",
+  get: ({ get }) => {
+    const { url, file } = get(inputConfigState)
+    if (!(url || file)) return []
+    return new Promise((resolve, reject) => {
+      Papa.parse(url || file, {
+        download: true,
+        error: reject,
+        worker: true,
+        complete: (results) => {
+          // @ts-ignore
+          resolve(results.data)
+        },
+      })
+    })
+  },
+})
 
 const filterState = atom<any[]>({
   key: "filters",
