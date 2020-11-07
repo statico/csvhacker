@@ -1,3 +1,5 @@
+import AutoSizer from "react-virtualized-auto-sizer"
+import { VariableSizeGrid as Grid } from "react-window"
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
 import Papa from "papaparse"
 import {
@@ -9,6 +11,7 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd"
+import { useCallback, useMemo } from "react"
 
 const getUrlState = (): any => {
   if (!process.browser || !document.location.hash) return {}
@@ -81,7 +84,7 @@ const filterState = atom<any[]>({
   default: [
     {
       type: "head",
-      count: 10,
+      count: 100,
     },
   ],
   effects_UNSTABLE: [
@@ -125,6 +128,18 @@ const outputState = selector<any[][]>({
       }
     }
     return ret
+  },
+})
+
+const outputStatsState = selector<any>({
+  key: "outputStats",
+  get: ({ get }) => {
+    const output = get(outputState)
+    let numColumns = 0
+    for (const row of output) {
+      if (row.length > numColumns) numColumns = row.length
+    }
+    return { numRows: output.length, numColumns }
   },
 })
 
@@ -239,36 +254,61 @@ const Filters = () => {
   )
 }
 
+const Output = () => {
+  const output = useRecoilValue(outputState)
+  const { numRows, numColumns } = useRecoilValue(outputStatsState)
+
+  if (!output) return null
+
+  const columnWidths = new Array(numColumns).fill(100)
+  const rowHeights = new Array(numRows).fill(100)
+
+  const Cell = ({ columnIndex, rowIndex, style }) => (
+    <div style={style} className="border-t border-l p-1 text-sm truncate">
+      {output?.[rowIndex]?.[columnIndex]}
+    </div>
+  )
+
+  return (
+    <AutoSizer defaultHeight={300} defaultWidth={500}>
+      {({ height, width }) => (
+        <Grid
+          width={width}
+          height={height}
+          rowCount={numRows}
+          columnCount={numColumns}
+          rowHeight={(index) => rowHeights[index]}
+          columnWidth={(index) => columnWidths[index]}
+        >
+          {Cell}
+        </Grid>
+      )}
+    </AutoSizer>
+  )
+}
+
 const Main = () => {
   const input = useRecoilValue(inputState)
   const output = useRecoilValue(outputState)
 
   return (
-    <div className="p-2 flex flex-row">
-      <div className="mr-5">
-        <h1 className="text-xl">Filters</h1>
-        <Filters />
-      </div>
-      <div>
-        <h1 className="text-xl">Data</h1>
-        <div>
-          Input: {input.length.toLocaleString()} rows | Output:{" "}
-          {output.length.toLocaleString()} rows
+    <div className="flex flex-col w-full h-screen z-30">
+      {/* TODO: Header */}
+      <div className="flex flex-row w-full h-full">
+        <div className="p-1">
+          <h1 className="text-xl">Filters</h1>
+          <Filters />
         </div>
-        <table className="text-sm w-full">
-          <tbody>
-            {output &&
-              output.map((row, i) => (
-                <tr key={i}>
-                  {row.map((cell, j) => (
-                    <td key={j} className="border b-1 px-1">
-                      {cell}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <div className="p-1 w-full flex flex-col">
+          <h1 className="text-xl">Data</h1>
+          <div>
+            Input: {input.length.toLocaleString()} rows | Output:{" "}
+            {output.length.toLocaleString()} rows
+          </div>
+          <div className="flex-1">
+            <Output />
+          </div>
+        </div>
       </div>
     </div>
   )

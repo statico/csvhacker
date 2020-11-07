@@ -20,18 +20,18 @@
 1. [x] Load CSV data from file quickly and responsively
 1. [x] Filter basics: toolbox & drag and drop
 1. [x] Serialize filters to URL
+1. [x] Virtualized and fast table rendering
 1. [ ] Configurable filters - head, tail
-1. [ ] Input options
-1. [ ] Filters: find, exclude
 1. [ ] Save to CSV
 1. [ ] Save to XLSX
+1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)
 1. [ ] Filters: rmnew, trim, upper, lower
 1. [ ] Filters: split (on character), split (on fixed size)
 1. [ ] Filters: sort
 1. [ ] Filters: date format
-1. [ ] Virtualized and fast table rendering
+1. [ ] Input options
 1. [ ] Resizable work area
 1. [ ] Collapsable sidebar
 1. [ ] Stats at the bottom?
