@@ -3,7 +3,6 @@ import React, { Suspense } from "react"
 import { RecoilRoot } from "recoil"
 
 import "../styles.css"
-import "react-data-grid/dist/react-data-grid.css"
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   // If we use Suspense in the server-side we get an error, "Cannot hydrate Suspense in legacy mode."

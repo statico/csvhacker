@@ -1,5 +1,5 @@
 import AutoSizer from "react-virtualized-auto-sizer"
-import DataGrid from "react-data-grid"
+import { VariableSizeGrid as Grid } from "react-window"
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
 import Papa from "papaparse"
 import {
@@ -263,17 +263,25 @@ const Output = () => {
   const columnWidths = new Array(numColumns).fill(100)
   const rowHeights = new Array(numRows).fill(100)
 
+  const Cell = ({ columnIndex, rowIndex, style }) => (
+    <div style={style} className="border-t border-l p-1 text-sm truncate">
+      {output?.[rowIndex]?.[columnIndex]}
+    </div>
+  )
+
   return (
     <AutoSizer defaultHeight={300} defaultWidth={500}>
       {({ height, width }) => (
-        <DataGrid
-          style={{ width, height }}
-          rowClass={() => "text-xs"}
-          rows={output}
-          columns={Array(numColumns)
-            .fill(true)
-            .map((_, i) => ({ key: String(i), name: `Column ${i + 1}` }))}
-        />
+        <Grid
+          width={width}
+          height={height}
+          rowCount={numRows}
+          columnCount={numColumns}
+          rowHeight={(index) => rowHeights[index]}
+          columnWidth={(index) => columnWidths[index]}
+        >
+          {Cell}
+        </Grid>
       )}
     </AutoSizer>
   )
