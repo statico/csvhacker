@@ -1,5 +1,5 @@
 import Papa from "papaparse"
-import { useCallback } from "react"
+import { ReactNode, useCallback } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -158,6 +158,53 @@ const getStyle = (
   }
 }
 
+const Filter = ({ index }: { index: number }): ReactNode => {
+  const filters = useRecoilValue(filterState)
+  const setFilters = useSetRecoilState(filterState)
+
+  const filter = filters[index]
+  const update = (value: any) => {
+    const f = [...filters]
+    f[index] = { ...filter, ...value }
+    setFilters(f)
+  }
+
+  switch (filter.type) {
+    case "head":
+      return (
+        <div>
+          <div className="font-bold block">Head</div>
+          <label>
+            Lines:{" "}
+            <input
+              className="border"
+              style={{ width: 50 }}
+              type="text"
+              value={filter.count}
+              onChange={(e) => update({ count: Number(e.target.value) || 0 })}
+            />
+          </label>
+        </div>
+      )
+    case "tail":
+      return (
+        <div>
+          <div className="font-bold">Tail</div>
+          <label>
+            Lines:{" "}
+            <input
+              className="border"
+              style={{ width: 50 }}
+              type="text"
+              value={filter.count}
+              onChange={(e) => update({ count: Number(e.target.value) || 0 })}
+            />
+          </label>
+        </div>
+      )
+  }
+}
+
 const Filters = () => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
@@ -202,7 +249,11 @@ const Filters = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="toolbox" isDropDisabled={true}>
           {(provided, snapshot) => (
-            <div ref={provided.innerRef} className="mr-5">
+            <div
+              ref={provided.innerRef}
+              className="mr-5"
+              style={{ width: 100 }}
+            >
               {["head", "tail"].map((key, i) => (
                 <Draggable draggableId={key} index={i} key={key}>
                   {(
@@ -227,7 +278,7 @@ const Filters = () => {
 
         <Droppable droppableId="filters">
           {(provided, snapshot) => (
-            <div ref={provided.innerRef}>
+            <div ref={provided.innerRef} style={{ width: 200 }}>
               {filters.map((filter, i) => (
                 <Draggable draggableId={String(i)} index={i} key={i}>
                   {(
@@ -242,7 +293,7 @@ const Filters = () => {
                       className="bg-white border border-gray-800 b-2 mb-2 p-2 block"
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
-                      {i}: {JSON.stringify(filter)}
+                      <Filter index={i} />
                     </div>
                   )}
                 </Draggable>

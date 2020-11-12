@@ -22,7 +22,7 @@
 1. [x] Serialize filters to URL
 1. [x] Virtualized and fast table rendering
 1. [x] Drag & drop
-1. [ ] Configurable filters - head, tail
+1. [x] Configurable filters - head, tail
 1. [ ] Save to CSV
 1. [ ] Save to XLSX
 1. [ ] Filters: find, exclude
@@ -38,6 +38,7 @@
 1. [ ] Stats at the bottom?
 1. [ ] Raw data tab
 1. [ ] Test with various data sources
+1. [ ] UI/UX pass
 
 ## To Fix Later
 
