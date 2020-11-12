@@ -21,6 +21,7 @@
 1. [x] Filter basics: toolbox & drag and drop
 1. [x] Serialize filters to URL
 1. [x] Virtualized and fast table rendering
+1. [x] Drag & drop
 1. [ ] Configurable filters - head, tail
 1. [ ] Save to CSV
 1. [ ] Save to XLSX

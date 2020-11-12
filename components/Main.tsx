@@ -1,7 +1,5 @@
-import AutoSizer from "react-virtualized-auto-sizer"
-import { VariableSizeGrid as Grid } from "react-window"
-import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
 import Papa from "papaparse"
+import { useCallback } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -11,7 +9,11 @@ import {
   Droppable,
   OnDragEndResponder,
 } from "react-beautiful-dnd"
-import { useCallback, useMemo } from "react"
+import { useDropzone } from "react-dropzone"
+import { FaCloudUploadAlt } from "react-icons/fa"
+import AutoSizer from "react-virtualized-auto-sizer"
+import { VariableSizeGrid as Grid } from "react-window"
+import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
 
 const getUrlState = (): any => {
   if (!process.browser || !document.location.hash) return {}
@@ -285,12 +287,25 @@ const Output = () => {
 }
 
 const Main = () => {
+  const setInputConfig = useSetRecoilState(inputConfigState)
   const input = useRecoilValue(inputState)
   const output = useRecoilValue(outputState)
 
+  const onDrop = useCallback((files) => {
+    if (files?.length) {
+      setInputConfig({ file: files[0] })
+    }
+  }, [])
+  const { getRootProps, isDragActive } = useDropzone({ onDrop })
+
   return (
-    <div className="flex flex-col w-full h-screen z-30">
+    <div className="flex flex-col w-full h-screen z-30" {...getRootProps()}>
       {/* TODO: Header */}
+      {isDragActive && (
+        <div className="flex justify-center items-center absolute left-0 right-0 top-0 bottom-0 z-50 bg-green-500 opacity-50">
+          <FaCloudUploadAlt className="text-white text-6xl animate-bounce" />
+        </div>
+      )}
       <div className="flex flex-row w-full h-full">
         <div className="p-1">
           <h1 className="text-xl">Filters</h1>
