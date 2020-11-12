@@ -260,9 +260,6 @@ const Output = () => {
 
   if (!output) return null
 
-  const columnWidths = new Array(numColumns).fill(100)
-  const rowHeights = new Array(numRows).fill(100)
-
   const Cell = ({ columnIndex, rowIndex, style }) => (
     <div style={style} className="border-t border-l p-1 text-sm truncate">
       {output?.[rowIndex]?.[columnIndex]}
@@ -277,8 +274,8 @@ const Output = () => {
           height={height}
           rowCount={numRows}
           columnCount={numColumns}
-          rowHeight={(index) => rowHeights[index]}
-          columnWidth={(index) => columnWidths[index]}
+          rowHeight={() => 30}
+          columnWidth={() => 150}
         >
           {Cell}
         </Grid>
