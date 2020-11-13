@@ -108,13 +108,13 @@ export const Filters = () => {
   }
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row flex-grow h-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="toolbox" isDropDisabled={true}>
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              className="mr-5"
+              className="bg-blue-200 p-2"
               style={{ width: 100 }}
             >
               {["head", "tail"].map((key, i) => (
@@ -127,7 +127,7 @@ export const Filters = () => {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="select-none bg-white border border-gray-800 b-2 mb-2 p-2 block"
+                      className="select-none bg-white rounded-sm mb-2 p-2 block"
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
                       {key}
@@ -141,7 +141,11 @@ export const Filters = () => {
 
         <Droppable droppableId="filters">
           {(provided, snapshot) => (
-            <div ref={provided.innerRef} style={{ width: 200 }}>
+            <div
+              className="shadow-inner overflow-y-scroll p-2"
+              ref={provided.innerRef}
+              style={{ width: 200 }}
+            >
               {filters.map((filter, i) => (
                 <Draggable draggableId={String(i)} index={i} key={i}>
                   {(
@@ -153,7 +157,7 @@ export const Filters = () => {
                       key={i}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="bg-white border border-gray-800 b-2 mb-2 p-2 block"
+                      className="bg-white rounded-sm mb-2 p-2 block shadow"
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
                       <Filter index={i} />
