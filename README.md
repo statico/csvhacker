@@ -27,7 +27,7 @@
 1. [x] Save to XLSX
 1. [x] Input options
 1. [x] Output options
-1. [ ] Test with various data sources
+1. [x] Test with various data sources
 1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)
@@ -36,6 +36,8 @@
 1. [ ] Filters: sort
 1. [ ] Filters: date format
 1. [ ] UI/UX pass
+1. [ ] XLSX import
+1. [ ] Better grid implementation
 
 ### Ideas:
 

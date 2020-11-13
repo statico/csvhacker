@@ -2,6 +2,13 @@
   "name": "csvhacker",
   "version": "0.0.1",
   "author": "Ian Langworth <ian@langworth.com>",
+  "homepage": "https://csvhacker.statico.io/",
+  "bugs": {
+    "url": "https://github.com/statico/csvhacker/issues"
+  },
+  "repository": {
+    "url": "https://github.com/statico/csvhacker.git"
+  },
   "license": "MIT",
   "private": true,
   "scripts": {

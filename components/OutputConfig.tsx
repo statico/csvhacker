@@ -41,7 +41,7 @@ export const OutputConfig = () => {
   )
 
   return (
-    <div className="border border-gray-900 p-2 mb-5">
+    <div className="bg-blue-200 p-2">
       <div className="font-bold">Output</div>
       <div>
         Delimiter:

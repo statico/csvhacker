@@ -1,4 +1,5 @@
 import { useCallback } from "react"
+import { FaExternalLinkAlt } from "react-icons/fa"
 import { useRecoilState } from "recoil"
 import { inputConfigState } from "../lib/state"
 
@@ -15,14 +16,21 @@ export const InputConfig = () => {
     [config]
   )
   return (
-    <div className="border border-gray-900 p-2 mb-5">
-      <div className="font-bold">Input</div>
-      <div className="italic w-full truncate">
-        {config.file
-          ? `File: xxx`
-          : config.url
-          ? `URL: ${config.url}`
-          : `No data`}
+    <div className="bg-blue-200 p-2">
+      <div className="font-bold">
+        Input:{" "}
+        {config.file ? (
+          `Local File`
+        ) : config.url ? (
+          <span>
+            URL{" "}
+            <a href={config.url} target="_blank">
+              <FaExternalLinkAlt className="inline align-text-bottom" />
+            </a>
+          </span>
+        ) : (
+          `None`
+        )}
       </div>
       <div>
         Delimiter:
