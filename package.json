@@ -20,7 +20,8 @@
     "react-icons": "^3.11.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.6",
-    "recoil": "^0.1.2"
+    "recoil": "^0.1.2",
+    "xlsx": "^0.16.8"
   },
   "devDependencies": {
     "@types/next": "^9.0.0",
@@ -35,6 +36,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "@types/react-window": "^1.8.2",
     "@types/recoil": "^0.0.1",
+    "@types/xlsx": "^0.0.36",
     "husky": "^4.3.0",
     "postcss-flexbugs-fixes": "^5.0.0",
     "postcss-preset-env": "^6.7.0",

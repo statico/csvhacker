@@ -1,3 +1,4 @@
+import XLSX from "xlsx"
 import Papa from "papaparse"
 import fileDownload from "js-file-download"
 import { ReactNode, useCallback } from "react"
@@ -350,9 +351,16 @@ const Main = () => {
   }, [])
   const { getRootProps, isDragActive } = useDropzone({ onDrop })
 
-  const download = useCallback(async () => {
+  const downloadCSV = useCallback(async () => {
     const data = Papa.unparse(output)
     fileDownload(data, "csvhacker.csv")
+  }, [output])
+
+  const downloadXLSX = useCallback(async () => {
+    const ws = XLSX.utils.aoa_to_sheet(output)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws)
+    XLSX.writeFile(wb, "csvhacker.xlsx")
   }, [output])
 
   return (
@@ -360,7 +368,11 @@ const Main = () => {
       <header className="flex flex-row text-gray-100 bg-gray-900 items-center">
         <div className="p-1 flex-grow">csvhacker</div>
         <div className="p-1 flex-grow text-right">
-          <span onClick={download}>
+          <span onClick={downloadXLSX}>
+            XLSX
+            <FaDownload className="inline" />
+          </span>
+          <span onClick={downloadCSV}>
             CSV
             <FaDownload className="inline" />
           </span>

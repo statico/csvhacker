@@ -23,8 +23,8 @@
 1. [x] Virtualized and fast table rendering
 1. [x] Drag & drop
 1. [x] Configurable filters - head, tail
-1. [ ] Save to CSV
-1. [ ] Save to XLSX
+1. [x] Save to CSV
+1. [x] Save to XLSX
 1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)
