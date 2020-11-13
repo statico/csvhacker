@@ -1,10 +1,11 @@
 import fileDownload from "js-file-download"
 import Papa from "papaparse"
-import { useCallback } from "react"
+import React, { useCallback } from "react"
 import { FaDownload } from "react-icons/fa"
 import { useRecoilState, useRecoilValue } from "recoil"
 import XLSX from "xlsx"
 import { outputConfigState, outputState } from "../lib/state"
+import { RadioGroup } from "./RadioGroup"
 
 export const OutputConfig = () => {
   const output = useRecoilValue(outputState)
@@ -30,11 +31,10 @@ export const OutputConfig = () => {
   }, [output])
 
   const onChange = useCallback(
-    (e: any) => {
-      const val = e.target.value
+    (value: any) => {
       setConfig({
         ...config,
-        delimiter: val === "auto" ? undefined : val,
+        delimiter: value === "auto" ? undefined : value,
       })
     },
     [config]
@@ -44,37 +44,17 @@ export const OutputConfig = () => {
     <div className="bg-blue-200 p-2">
       <div className="font-bold">Output</div>
       <div>
-        Delimiter:
-        <label>
-          <input
-            type="radio"
-            name="outputDelimiter"
-            value="auto"
-            checked={config.delimiter === undefined}
-            onChange={onChange}
-          />
-          Auto
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="outputDelimiter"
-            value="comma"
-            checked={config.delimiter === "comma"}
-            onChange={onChange}
-          />
-          Comma
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="outputDelimiter"
-            value="tab"
-            checked={config.delimiter === "tab"}
-            onChange={onChange}
-          />
-          Tab
-        </label>
+        Delimiter:{" "}
+        <RadioGroup
+          name="outputDelimiter"
+          value={config.delimiter || "auto"}
+          items={[
+            { label: "Auto", value: "auto" },
+            { label: "Comma", value: "comma" },
+            { label: "Tab", value: "tab" },
+          ]}
+          onChange={onChange}
+        />
       </div>
       <div>
         <span onClick={downloadXLSX}>

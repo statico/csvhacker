@@ -2,15 +2,15 @@ import { useCallback } from "react"
 import { FaExternalLinkAlt } from "react-icons/fa"
 import { useRecoilState } from "recoil"
 import { inputConfigState } from "../lib/state"
+import { RadioGroup } from "./RadioGroup"
 
 export const InputConfig = () => {
   const [config, setConfig] = useRecoilState(inputConfigState)
   const onChange = useCallback(
-    (e: any) => {
-      const val = e.target.value
+    (value: any) => {
       setConfig({
         ...config,
-        delimiter: val === "auto" ? undefined : val,
+        delimiter: value === "auto" ? undefined : value,
       })
     },
     [config]
@@ -33,37 +33,17 @@ export const InputConfig = () => {
         )}
       </div>
       <div>
-        Delimiter:
-        <label>
-          <input
-            type="radio"
-            name="inputDelimiter"
-            value="auto"
-            checked={config.delimiter === undefined}
-            onChange={onChange}
-          />
-          Auto
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="inputDelimiter"
-            value="comma"
-            checked={config.delimiter === "comma"}
-            onChange={onChange}
-          />
-          Comma
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="inputDelimiter"
-            value="tab"
-            checked={config.delimiter === "tab"}
-            onChange={onChange}
-          />
-          Tab
-        </label>
+        Delimiter:{" "}
+        <RadioGroup
+          name="inputDelimiter"
+          value={config.delimiter || "auto"}
+          items={[
+            { label: "Auto", value: "auto" },
+            { label: "Comma", value: "comma" },
+            { label: "Tab", value: "tab" },
+          ]}
+          onChange={onChange}
+        />
       </div>
     </div>
   )
