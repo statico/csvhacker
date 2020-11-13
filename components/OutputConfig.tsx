@@ -1,10 +1,11 @@
 import fileDownload from "js-file-download"
 import Papa from "papaparse"
 import React, { useCallback } from "react"
-import { FaDownload } from "react-icons/fa"
+import { FaFileDownload } from "react-icons/fa"
 import { useRecoilState, useRecoilValue } from "recoil"
 import XLSX from "xlsx"
 import { outputConfigState, outputState } from "../lib/state"
+import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
 export const OutputConfig = () => {
@@ -43,7 +44,7 @@ export const OutputConfig = () => {
   return (
     <div className="bg-blue-200 p-2">
       <div className="font-bold">Output</div>
-      <div>
+      <div className="mb-2">
         Delimiter:{" "}
         <RadioGroup
           name="outputDelimiter"
@@ -56,15 +57,13 @@ export const OutputConfig = () => {
           onChange={onChange}
         />
       </div>
-      <div>
-        <span onClick={downloadXLSX}>
-          XLSX
-          <FaDownload className="inline" />
-        </span>
-        <span onClick={downloadCSV}>
-          CSV
-          <FaDownload className="inline" />
-        </span>
+      <div className="text-center">
+        <Button onClick={downloadCSV}>
+          CSV <FaFileDownload className="inline align-text-bottom" />
+        </Button>{" "}
+        <Button onClick={downloadXLSX}>
+          XLSX <FaFileDownload className="inline align-text-bottom" />
+        </Button>{" "}
       </div>
     </div>
   )

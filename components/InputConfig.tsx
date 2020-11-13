@@ -1,11 +1,12 @@
 import { useCallback } from "react"
-import { FaExternalLinkAlt } from "react-icons/fa"
 import { useRecoilState } from "recoil"
 import { inputConfigState } from "../lib/state"
+import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
-export const InputConfig = () => {
+export const InputConfig = ({ open }: { open: () => void }) => {
   const [config, setConfig] = useRecoilState(inputConfigState)
+
   const onChange = useCallback(
     (value: any) => {
       setConfig({
@@ -15,22 +16,18 @@ export const InputConfig = () => {
     },
     [config]
   )
+
   return (
     <div className="bg-blue-200 p-2">
-      <div className="font-bold">
+      <div className="font-bold mb-2">
         Input:{" "}
-        {config.file ? (
-          `Local File`
-        ) : config.url ? (
-          <span>
-            URL{" "}
-            <a href={config.url} target="_blank">
-              <FaExternalLinkAlt className="inline align-text-bottom" />
-            </a>
-          </span>
-        ) : (
-          `None`
-        )}
+        <Button onClick={open}>
+          {config.file
+            ? config.file.name || "Local file"
+            : config.url
+            ? config.url
+            : `None`}
+        </Button>
       </div>
       <div>
         Delimiter:{" "}
