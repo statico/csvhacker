@@ -123,6 +123,13 @@ const filterState = atom<any[]>({
   ],
 })
 
+const outputConfigState = atom<{
+  delimiter?: "comma" | "tab"
+}>({
+  key: "outputConfig",
+  default: {},
+})
+
 const outputState = selector<any[][]>({
   key: "output",
   get: ({ get }) => {
@@ -378,7 +385,7 @@ const InputConfig = () => {
         <label>
           <input
             type="radio"
-            name="delimiter"
+            name="inputDelimiter"
             value="auto"
             checked={config.delimiter === undefined}
             onChange={onChange}
@@ -388,7 +395,7 @@ const InputConfig = () => {
         <label>
           <input
             type="radio"
-            name="delimiter"
+            name="inputDelimiter"
             value="comma"
             checked={config.delimiter === "comma"}
             onChange={onChange}
@@ -398,7 +405,7 @@ const InputConfig = () => {
         <label>
           <input
             type="radio"
-            name="delimiter"
+            name="inputDelimiter"
             value="tab"
             checked={config.delimiter === "tab"}
             onChange={onChange}
@@ -410,19 +417,19 @@ const InputConfig = () => {
   )
 }
 
-const Main = () => {
-  const setInputConfig = useSetRecoilState(inputConfigState)
+const OutputConfig = () => {
   const output = useRecoilValue(outputState)
-
-  const onDrop = useCallback((files) => {
-    if (files?.length) {
-      setInputConfig({ file: files[0] })
-    }
-  }, [])
-  const { getRootProps, isDragActive } = useDropzone({ onDrop })
+  const [config, setConfig] = useRecoilState(outputConfigState)
 
   const downloadCSV = useCallback(async () => {
-    const data = Papa.unparse(output)
+    const data = Papa.unparse(output, {
+      delimiter:
+        config.delimiter === "comma"
+          ? ","
+          : config.delimiter === "tab"
+          ? "\t"
+          : undefined,
+    })
     fileDownload(data, "csvhacker.csv")
   }, [output])
 
@@ -433,20 +440,82 @@ const Main = () => {
     XLSX.writeFile(wb, "csvhacker.xlsx")
   }, [output])
 
+  const onChange = useCallback(
+    (e: any) => {
+      const val = e.target.value
+      setConfig({
+        ...config,
+        delimiter: val === "auto" ? undefined : val,
+      })
+    },
+    [config]
+  )
+
+  return (
+    <div className="border border-gray-900 p-2 mb-5">
+      <div className="font-bold">Output</div>
+      <div>
+        Delimiter:
+        <label>
+          <input
+            type="radio"
+            name="outputDelimiter"
+            value="auto"
+            checked={config.delimiter === undefined}
+            onChange={onChange}
+          />
+          Auto
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="outputDelimiter"
+            value="comma"
+            checked={config.delimiter === "comma"}
+            onChange={onChange}
+          />
+          Comma
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="outputDelimiter"
+            value="tab"
+            checked={config.delimiter === "tab"}
+            onChange={onChange}
+          />
+          Tab
+        </label>
+      </div>
+      <div>
+        <span onClick={downloadXLSX}>
+          XLSX
+          <FaDownload className="inline" />
+        </span>
+        <span onClick={downloadCSV}>
+          CSV
+          <FaDownload className="inline" />
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const Main = () => {
+  const setInputConfig = useSetRecoilState(inputConfigState)
+
+  const onDrop = useCallback((files) => {
+    if (files?.length) {
+      setInputConfig({ file: files[0] })
+    }
+  }, [])
+  const { getRootProps, isDragActive } = useDropzone({ onDrop })
+
   return (
     <div className="flex flex-col w-full h-screen z-30" {...getRootProps()}>
       <header className="flex flex-row text-gray-100 bg-gray-900 items-center">
         <div className="p-1 flex-grow">csvhacker</div>
-        <div className="p-1 flex-grow text-right">
-          <span onClick={downloadXLSX}>
-            XLSX
-            <FaDownload className="inline" />
-          </span>
-          <span onClick={downloadCSV}>
-            CSV
-            <FaDownload className="inline" />
-          </span>
-        </div>
+        <div className="p-1 flex-grow text-right"></div>
       </header>
       {isDragActive && (
         <div className="flex justify-center items-center absolute left-0 right-0 top-0 bottom-0 z-50 bg-green-500 opacity-50">
@@ -454,14 +523,15 @@ const Main = () => {
         </div>
       )}
       <main className="flex flex-row w-full h-full">
-        <section className="p-1">
+        <section className="p-1 flex flex-col h-full">
           <InputConfig />
-          <Filters />
+          <div className="flex-grow">
+            <Filters />
+          </div>
+          <OutputConfig />
         </section>
         <section className="p-1 w-full flex flex-col">
-          <div className="flex-1">
-            <Output />
-          </div>
+          <Output />
         </section>
       </main>
     </div>

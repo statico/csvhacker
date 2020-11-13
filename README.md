@@ -26,7 +26,7 @@
 1. [x] Save to CSV
 1. [x] Save to XLSX
 1. [x] Input options
-1. [ ] Output options
+1. [x] Output options
 1. [ ] Raw data tab
 1. [ ] Test with various data sources
 1. [ ] Filters: find, exclude
