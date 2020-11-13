@@ -1,16 +1,10 @@
 import { useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import {
-  FaCloudUploadAlt,
-  FaGithub,
-  FaInfo,
-  FaInfoCircle,
-  FaQuestionCircle,
-} from "react-icons/fa"
+import { FaCloudUploadAlt, FaGithub, FaQuestionCircle } from "react-icons/fa"
 import { useSetRecoilState } from "recoil"
 import { inputConfigState } from "../lib/state"
 import packageJSON from "../package.json"
-import { Filters } from "./Filters"
+import { FilterList } from "./Filters"
 import { Grid } from "./Grid"
 import { InputConfig } from "./InputConfig"
 import { OutputConfig } from "./OutputConfig"
@@ -72,7 +66,7 @@ const Main = () => {
 
           <InputConfig open={open} />
           <div className="flex-grow">
-            <Filters />
+            <FilterList />
           </div>
           <OutputConfig />
         </section>

@@ -8,7 +8,9 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd"
 import { useRecoilValue, useSetRecoilState } from "recoil"
+import { Filters } from "../lib/filters"
 import { filterState } from "../lib/state"
+import Tooltip from "./Tooltip"
 
 const getStyle = (
   style: DraggableProvidedDraggableProps["style"],
@@ -22,7 +24,8 @@ const getStyle = (
     transitionDuration: `0.001s`,
   }
 }
-const Filter = ({ index }: { index: number }) => {
+
+const FilterView = ({ index }: { index: number }) => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
@@ -68,7 +71,8 @@ const Filter = ({ index }: { index: number }) => {
       )
   }
 }
-export const Filters = () => {
+
+export const FilterList = () => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
@@ -111,27 +115,41 @@ export const Filters = () => {
     <div className="flex flex-row flex-grow h-full">
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="toolbox" isDropDisabled={true}>
-          {(provided, snapshot) => (
+          {(provided, outerSnapshot) => (
             <div
               ref={provided.innerRef}
               className="bg-blue-200 p-2"
               style={{ width: 100 }}
             >
-              {["head", "tail"].map((key, i) => (
-                <Draggable draggableId={key} index={i} key={key}>
+              {Filters.map((filter, index) => (
+                <Draggable
+                  draggableId={filter.key}
+                  index={index}
+                  key={filter.key}
+                >
                   {(
                     provided: DraggableProvided,
                     snapshot: DraggableStateSnapshot
                   ) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      className="select-none bg-white rounded-sm mb-2 p-2 block"
-                      style={getStyle(provided.draggableProps.style, snapshot)}
+                    <Tooltip
+                      tip={filter.description}
+                      disabled={
+                        outerSnapshot.isDraggingOver || snapshot.isDragging
+                      }
                     >
-                      {key}
-                    </div>
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        className="select-none bg-white rounded-sm mb-2 p-2 block"
+                        style={getStyle(
+                          provided.draggableProps.style,
+                          snapshot
+                        )}
+                      >
+                        {filter.name}
+                      </div>
+                    </Tooltip>
                   )}
                 </Draggable>
               ))}
@@ -160,7 +178,7 @@ export const Filters = () => {
                       className="bg-white rounded-sm mb-2 p-2 block shadow"
                       style={getStyle(provided.draggableProps.style, snapshot)}
                     >
-                      <Filter index={i} />
+                      <FilterView index={i} />
                     </div>
                   )}
                 </Draggable>

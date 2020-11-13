@@ -3,6 +3,7 @@ import React, { Suspense } from "react"
 import { RecoilRoot } from "recoil"
 
 import "../styles.css"
+import "react-tippy/dist/tippy.css"
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   // If we use Suspense in the server-side we get an error, "Cannot hydrate Suspense in legacy mode."

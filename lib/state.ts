@@ -2,8 +2,6 @@ import Papa from "papaparse"
 import { atom, selector } from "recoil"
 import { getUrlState, setUrlState } from "./url"
 
-type Matrix = any[][]
-
 interface InputConfigState {
   url?: string
   file?: File

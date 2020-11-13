@@ -25,10 +25,12 @@
     "react-dom": "^0.0.0-experimental-4ead6b530",
     "react-dropzone": "^11.2.4",
     "react-icons": "^3.11.0",
+    "react-tippy": "^1.4.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.6",
     "recoil": "^0.1.2",
     "rison-node": "^2.1.1",
+    "runtypes": "^5.0.1",
     "xlsx": "^0.16.8"
   },
   "devDependencies": {
