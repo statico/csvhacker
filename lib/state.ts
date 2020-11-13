@@ -2,11 +2,15 @@ import Papa from "papaparse"
 import { atom, selector } from "recoil"
 import { getUrlState, setUrlState } from "./url"
 
-export const inputConfigState = atom<{
+type Matrix = any[][]
+
+interface InputConfigState {
   url?: string
   file?: File
   delimiter?: "comma" | "tab"
-}>({
+}
+
+export const inputConfigState = atom<InputConfigState>({
   key: "inputConfig",
   default: {},
   effects_UNSTABLE: [
@@ -36,7 +40,7 @@ export const inputConfigState = atom<{
   ],
 })
 
-export const inputState = selector<any[][]>({
+export const inputState = selector<Matrix>({
   key: "input",
   get: ({ get }) => {
     const { url, file, delimiter } = get(inputConfigState)
@@ -85,14 +89,16 @@ export const filterState = atom<any[]>({
   ],
 })
 
-export const outputConfigState = atom<{
+interface OutputConfigState {
   delimiter?: "comma" | "tab"
-}>({
+}
+
+export const outputConfigState = atom<OutputConfigState>({
   key: "outputConfig",
   default: {},
 })
 
-export const outputState = selector<any[][]>({
+export const outputState = selector<Matrix>({
   key: "output",
   get: ({ get }) => {
     const input = get(inputState)
@@ -116,7 +122,12 @@ export const outputState = selector<any[][]>({
   },
 })
 
-export const outputStatsState = selector<any>({
+interface OutputStatsState {
+  numRows: number
+  numColumns: number
+}
+
+export const outputStatsState = selector<OutputStatsState>({
   key: "outputStats",
   get: ({ get }) => {
     const output = get(outputState)
