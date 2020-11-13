@@ -27,7 +27,6 @@
 1. [x] Save to XLSX
 1. [x] Input options
 1. [x] Output options
-1. [ ] Raw data tab
 1. [ ] Test with various data sources
 1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
@@ -37,9 +36,14 @@
 1. [ ] Filters: sort
 1. [ ] Filters: date format
 1. [ ] UI/UX pass
+
+### Ideas:
+
 1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
 1. [ ] Resizable work area
 1. [ ] Collapsable sidebar
+1. [ ] Make raw data viewing smarter?
+1. [ ] Show spaces in cell values
 
 ## To Fix Later
 
