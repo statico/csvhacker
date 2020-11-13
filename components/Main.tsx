@@ -160,7 +160,7 @@ const getStyle = (
   }
 }
 
-const Filter = ({ index }: { index: number }): ReactNode => {
+const Filter = ({ index }: { index: number }) => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
