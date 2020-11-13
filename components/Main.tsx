@@ -1,4 +1,5 @@
 import Papa from "papaparse"
+import fileDownload from "js-file-download"
 import { ReactNode, useCallback } from "react"
 import {
   DragDropContext,
@@ -10,7 +11,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd"
 import { useDropzone } from "react-dropzone"
-import { FaCloudUploadAlt } from "react-icons/fa"
+import { FaCloudUploadAlt, FaDownload } from "react-icons/fa"
 import AutoSizer from "react-virtualized-auto-sizer"
 import { VariableSizeGrid as Grid } from "react-window"
 import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
@@ -349,20 +350,33 @@ const Main = () => {
   }, [])
   const { getRootProps, isDragActive } = useDropzone({ onDrop })
 
+  const download = useCallback(async () => {
+    const data = Papa.unparse(output)
+    fileDownload(data, "csvhacker.csv")
+  }, [output])
+
   return (
     <div className="flex flex-col w-full h-screen z-30" {...getRootProps()}>
-      {/* TODO: Header */}
+      <header className="flex flex-row text-gray-100 bg-gray-900 items-center">
+        <div className="p-1 flex-grow">csvhacker</div>
+        <div className="p-1 flex-grow text-right">
+          <span onClick={download}>
+            CSV
+            <FaDownload className="inline" />
+          </span>
+        </div>
+      </header>
       {isDragActive && (
         <div className="flex justify-center items-center absolute left-0 right-0 top-0 bottom-0 z-50 bg-green-500 opacity-50">
           <FaCloudUploadAlt className="text-white text-6xl animate-bounce" />
         </div>
       )}
-      <div className="flex flex-row w-full h-full">
-        <div className="p-1">
+      <main className="flex flex-row w-full h-full">
+        <section className="p-1">
           <h1 className="text-xl">Filters</h1>
           <Filters />
-        </div>
-        <div className="p-1 w-full flex flex-col">
+        </section>
+        <section className="p-1 w-full flex flex-col">
           <h1 className="text-xl">Data</h1>
           <div>
             Input: {input.length.toLocaleString()} rows | Output:{" "}
@@ -371,8 +385,8 @@ const Main = () => {
           <div className="flex-1">
             <Output />
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   )
 }

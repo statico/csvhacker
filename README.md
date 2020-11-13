@@ -38,6 +38,7 @@
 1. [ ] Stats at the bottom?
 1. [ ] Raw data tab
 1. [ ] Test with various data sources
+1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
 1. [ ] UI/UX pass
 
 ## To Fix Later
