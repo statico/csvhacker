@@ -1,7 +1,6 @@
-import XLSX from "xlsx"
-import Papa from "papaparse"
 import fileDownload from "js-file-download"
-import { ReactNode, useCallback } from "react"
+import Papa from "papaparse"
+import { useCallback } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -15,7 +14,14 @@ import { useDropzone } from "react-dropzone"
 import { FaCloudUploadAlt, FaDownload } from "react-icons/fa"
 import AutoSizer from "react-virtualized-auto-sizer"
 import { VariableSizeGrid as Grid } from "react-window"
-import { atom, selector, useRecoilValue, useSetRecoilState } from "recoil"
+import {
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil"
+import XLSX from "xlsx"
 
 const getUrlState = (): any => {
   if (!process.browser || !document.location.hash) return {}
@@ -34,7 +40,11 @@ const setUrlState = (state: any): void => {
   history.pushState(null, "", url.toString())
 }
 
-const inputConfigState = atom<{ url?: string; file?: File }>({
+const inputConfigState = atom<{
+  url?: string
+  file?: File
+  delimiter?: "comma" | "tab"
+}>({
   key: "inputConfig",
   default: {},
   effects_UNSTABLE: [
@@ -67,10 +77,12 @@ const inputConfigState = atom<{ url?: string; file?: File }>({
 const inputState = selector<any[][]>({
   key: "input",
   get: ({ get }) => {
-    const { url, file } = get(inputConfigState)
+    const { url, file, delimiter } = get(inputConfigState)
     if (!(url || file)) return []
     return new Promise((resolve, reject) => {
       Papa.parse(url || file, {
+        delimiter:
+          delimiter === "comma" ? "," : delimiter === "tab" ? "\t" : undefined,
         download: true,
         error: reject,
         worker: true,
@@ -339,9 +351,67 @@ const Output = () => {
   )
 }
 
+const InputConfig = () => {
+  const [config, setConfig] = useRecoilState(inputConfigState)
+  const onChange = useCallback(
+    (e: any) => {
+      const val = e.target.value
+      setConfig({
+        ...config,
+        delimiter: val === "auto" ? undefined : val,
+      })
+    },
+    [config]
+  )
+  return (
+    <div className="border border-gray-900 p-2 mb-5">
+      <div className="font-bold">Input</div>
+      <div className="italic w-full truncate">
+        {config.file
+          ? `File: xxx`
+          : config.url
+          ? `URL: ${config.url}`
+          : `No data`}
+      </div>
+      <div>
+        Delimiter:
+        <label>
+          <input
+            type="radio"
+            name="delimiter"
+            value="auto"
+            checked={config.delimiter === undefined}
+            onChange={onChange}
+          />
+          Auto
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="delimiter"
+            value="comma"
+            checked={config.delimiter === "comma"}
+            onChange={onChange}
+          />
+          Comma
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="delimiter"
+            value="tab"
+            checked={config.delimiter === "tab"}
+            onChange={onChange}
+          />
+          Tab
+        </label>
+      </div>
+    </div>
+  )
+}
+
 const Main = () => {
   const setInputConfig = useSetRecoilState(inputConfigState)
-  const input = useRecoilValue(inputState)
   const output = useRecoilValue(outputState)
 
   const onDrop = useCallback((files) => {
@@ -385,15 +455,10 @@ const Main = () => {
       )}
       <main className="flex flex-row w-full h-full">
         <section className="p-1">
-          <h1 className="text-xl">Filters</h1>
+          <InputConfig />
           <Filters />
         </section>
         <section className="p-1 w-full flex flex-col">
-          <h1 className="text-xl">Data</h1>
-          <div>
-            Input: {input.length.toLocaleString()} rows | Output:{" "}
-            {output.length.toLocaleString()} rows
-          </div>
           <div className="flex-1">
             <Output />
           </div>

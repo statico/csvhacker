@@ -25,6 +25,10 @@
 1. [x] Configurable filters - head, tail
 1. [x] Save to CSV
 1. [x] Save to XLSX
+1. [x] Input options
+1. [ ] Output options
+1. [ ] Raw data tab
+1. [ ] Test with various data sources
 1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)
@@ -32,14 +36,10 @@
 1. [ ] Filters: split (on character), split (on fixed size)
 1. [ ] Filters: sort
 1. [ ] Filters: date format
-1. [ ] Input options
+1. [ ] UI/UX pass
+1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
 1. [ ] Resizable work area
 1. [ ] Collapsable sidebar
-1. [ ] Stats at the bottom?
-1. [ ] Raw data tab
-1. [ ] Test with various data sources
-1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
-1. [ ] UI/UX pass
 
 ## To Fix Later
 
