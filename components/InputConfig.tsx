@@ -4,7 +4,13 @@ import { inputConfigState } from "../lib/state"
 import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
-export const InputConfig = ({ open }: { open: () => void }) => {
+export const InputConfig = ({
+  open,
+  className,
+}: {
+  open: () => void
+  className?: string
+}) => {
   const [config, setConfig] = useRecoilState(inputConfigState)
 
   const onChange = useCallback(
@@ -18,9 +24,9 @@ export const InputConfig = ({ open }: { open: () => void }) => {
   )
 
   return (
-    <div className="bg-blue-200 p-2">
-      <div className="font-bold mb-2">
-        Input:{" "}
+    <div className={className}>
+      <div className="flex flex-row items-center font-bold mb-2">
+        <div className="mr-2">Input:</div>
         <Button onClick={open}>
           {config.file
             ? config.file.name || "Local file"

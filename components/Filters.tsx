@@ -6,11 +6,14 @@ import {
   DraggableStateSnapshot,
   Droppable,
   OnDragEndResponder,
+  OnDragStartResponder,
 } from "react-beautiful-dnd"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { AllFilters, createFilterInstance } from "../lib/filters"
 import { filterState } from "../lib/state"
 import Tooltip from "./Tooltip"
+import classNames from "classnames"
+import { useState } from "react"
 
 const getStyle = (
   style: DraggableProvidedDraggableProps["style"],
@@ -73,7 +76,14 @@ const FilterView = ({ index }: { index: number }) => {
   }
 }
 
-export const FilterList = () => {
+export const FilterList = ({
+  wellClassName,
+  toolboxClassName,
+}: {
+  wellClassName?: string
+  toolboxClassName?: string
+}) => {
+  const [isDragging, setIsDragging] = useState(false)
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
@@ -96,11 +106,16 @@ export const FilterList = () => {
     setFilters(f)
   }
 
+  const onDragStart: OnDragStartResponder = () => {
+    setIsDragging(true)
+  }
+
   const onDragEnd: OnDragEndResponder = ({
     draggableId,
     source,
     destination,
   }) => {
+    setIsDragging(false)
     if (destination?.droppableId === "filters") {
       if (source.droppableId === "toolbox") {
         addFilter(draggableId, destination.index)
@@ -114,12 +129,12 @@ export const FilterList = () => {
 
   return (
     <div className="flex flex-row flex-grow h-full">
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
         <Droppable droppableId="toolbox" isDropDisabled={true}>
           {(provided, outerSnapshot) => (
             <div
               ref={provided.innerRef}
-              className="bg-blue-200 p-2"
+              className={toolboxClassName}
               style={{ width: 100 }}
             >
               {AllFilters.map((filter, index) => (
@@ -132,6 +147,7 @@ export const FilterList = () => {
                     provided: DraggableProvided,
                     snapshot: DraggableStateSnapshot
                   ) => (
+                    /* Tooltip positioning isn't ideal but we can revisit later */
                     <Tooltip
                       tip={filter.description}
                       disabled={
@@ -142,7 +158,7 @@ export const FilterList = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="select-none bg-white rounded-sm mb-2 p-2 block"
+                        className="select-none bg-white hover:bg-gray-200 rounded-md shadow mb-2 p-2 block"
                         style={getStyle(
                           provided.draggableProps.style,
                           snapshot
@@ -159,9 +175,12 @@ export const FilterList = () => {
         </Droppable>
 
         <Droppable droppableId="filters">
-          {(provided, snapshot) => (
+          {(provided, outerSnapshot) => (
             <div
-              className="shadow-inner overflow-y-auto p-2"
+              className={classNames(
+                wellClassName,
+                isDragging && "bg-green-200"
+              )}
               ref={provided.innerRef}
               style={{ width: 200 }}
             >
@@ -169,15 +188,18 @@ export const FilterList = () => {
                 <Draggable draggableId={String(i)} index={i} key={i}>
                   {(
                     provided: DraggableProvided,
-                    snapshot: DraggableStateSnapshot
+                    innerSnapshot: DraggableStateSnapshot
                   ) => (
                     <div
                       ref={provided.innerRef}
                       key={i}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className="bg-white rounded-sm mb-2 p-2 block shadow"
-                      style={getStyle(provided.draggableProps.style, snapshot)}
+                      className={`bg-white rounded-sm mb-2 p-2 block shadow`}
+                      style={getStyle(
+                        provided.draggableProps.style,
+                        innerSnapshot
+                      )}
                     >
                       <FilterView index={i} />
                     </div>

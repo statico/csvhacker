@@ -8,7 +8,7 @@ import { outputConfigState, outputState } from "../lib/state"
 import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
-export const OutputConfig = () => {
+export const OutputConfig = ({ className }: { className?: string }) => {
   const output = useRecoilValue(outputState)
   const [config, setConfig] = useRecoilState(outputConfigState)
 
@@ -42,7 +42,7 @@ export const OutputConfig = () => {
   )
 
   return (
-    <div className="bg-blue-200 p-2">
+    <div className={className}>
       <div className="font-bold">Output</div>
       <div className="mb-2">
         Delimiter:{" "}
@@ -57,13 +57,17 @@ export const OutputConfig = () => {
           onChange={onChange}
         />
       </div>
-      <div className="text-center">
-        <Button onClick={downloadCSV}>
-          CSV <FaFileDownload className="inline align-text-bottom" />
-        </Button>{" "}
-        <Button onClick={downloadXLSX}>
-          XLSX <FaFileDownload className="inline align-text-bottom" />
-        </Button>{" "}
+      <div className="flex flex-row justify-center">
+        <div className="mx-1">
+          <Button onClick={downloadCSV}>
+            CSV <FaFileDownload />
+          </Button>
+        </div>
+        <div className="mx-1">
+          <Button onClick={downloadXLSX}>
+            XLSX <FaFileDownload />
+          </Button>
+        </div>
       </div>
     </div>
   )

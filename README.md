@@ -36,6 +36,7 @@
 1. [ ] Filters: split (on character), split (on fixed size)
 1. [ ] Filters: sort
 1. [ ] Filters: date format
+1. [ ] File or URL modal
 1. [ ] UI/UX pass
 1. [ ] XLSX import
 1. [ ] Better grid implementation

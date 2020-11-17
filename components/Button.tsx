@@ -9,7 +9,15 @@ export const Button = ({
 }) => (
   <button
     type="button"
-    className="bg-gray-100 border border-gray-400 rounded-md text-sm px-2 py-1 hover:bg-white active:text-gray-600 active:bg-gray-700"
+    className={`
+      bg-gray-500 hover:bg-gray-500 active:bg-gray-300
+      text-gray-900
+      shadow-sm hover:shadow-md
+      rounded-md
+      px-3 py-2
+      transition-all duration-75
+      flex flex-row justify-center items-center
+      `}
     onClick={onClick}
   >
     {children}

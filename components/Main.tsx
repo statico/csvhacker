@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { ReactNode, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { FaCloudUploadAlt, FaGithub, FaQuestionCircle } from "react-icons/fa"
 import { useSetRecoilState } from "recoil"
@@ -8,6 +8,25 @@ import { FilterList } from "./Filters"
 import { Grid } from "./Grid"
 import { InputConfig } from "./InputConfig"
 import { OutputConfig } from "./OutputConfig"
+
+const HeaderLink = ({
+  href,
+  title,
+  children,
+}: {
+  href: string
+  title?: string
+  children: ReactNode
+}) => (
+  <a
+    href={href}
+    title={title}
+    className="font-mono text-gray-200 hover:text-gray-400 transition-colors duration-75"
+    target="_blank"
+  >
+    {children}
+  </a>
+)
 
 const Main = () => {
   const setInputConfig = useSetRecoilState(inputConfigState)
@@ -37,38 +56,27 @@ const Main = () => {
       )}
 
       <main className="flex flex-row w-full h-full">
-        <section className="flex flex-col h-full bg-blue-100">
-          <header className="flex flex-row bg-blue-800 items-center px-2 py-1">
-            <a
-              href={url}
-              className="font-mono text-sm text-gray-100 hover:text-gray-400"
-              target="_blank"
-            >
-              CSVHacker v{packageJSON.version}
-            </a>
-            <div className="flex-grow text-right">
-              <a
-                href={url + "#readme"}
-                className=" text-gray-100 hover:text-gray-400 "
-                target="_blank"
-              >
-                <FaQuestionCircle className="inline align-text-bottom" />
-              </a>{" "}
-              <a
-                href={url}
-                className=" text-gray-100 hover:text-gray-400 "
-                target="_blank"
-              >
-                <FaGithub className="inline align-text-bottom" />
-              </a>
+        <section className="flex flex-col h-full bg-gray-400 pb-2">
+          <header className="flex flex-row items-center p-3 bg-gray-800 text-lg">
+            <HeaderLink href={url}>CSVHacker v{packageJSON.version}</HeaderLink>
+            <div className="flex-grow flex flex-row justify-end items-center">
+              <HeaderLink href={url + "#readme"} title="README for CSVHacker">
+                <FaQuestionCircle className="ml-1" />
+              </HeaderLink>
+              <HeaderLink href={url} title="View source on GitHub">
+                <FaGithub className="ml-1" />
+              </HeaderLink>
             </div>
           </header>
 
-          <InputConfig open={open} />
+          <InputConfig open={open} className="p-3" />
           <div className="flex-grow">
-            <FilterList />
+            <FilterList
+              toolboxClassName={"px-3"}
+              wellClassName={"bg-gray-200 shadow-inner overflow-y-auto p-3"}
+            />
           </div>
-          <OutputConfig />
+          <OutputConfig className="p-3" />
         </section>
 
         <section className="p-1 w-full flex flex-col">

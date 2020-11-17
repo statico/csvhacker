@@ -13,9 +13,11 @@ const Tooltip = ({
   <TippyTooltip
     title={tip}
     disabled={disabled}
-    delay={350}
+    delay={0}
     duration={0}
-    size="small"
+    arrow
+    size="regular"
+    position="right"
     theme="dark"
     className="leading-none"
   >
