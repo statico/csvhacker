@@ -1,3 +1,4 @@
+import { debounce } from "debounce"
 import rison from "rison-node"
 
 // Using encode_object/decode_object instead of encode/decode saves some parens.
@@ -12,9 +13,17 @@ export const getUrlState = (): any => {
   }
 }
 
-export const setUrlState = (state: any): void => {
+const setUrlStateImmediately = (state: any): void => {
   if (!process.browser) return
+
+  const obj = JSON.parse(JSON.stringify(state))
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) delete obj[key]
+  })
+
   const url = new URL(document.location.href)
-  url.hash = Object.keys(state).length ? rison.encode_object(state) : ""
+  url.hash = Object.keys(obj).length ? rison.encode_object(obj) : ""
   history.pushState(null, "", url.toString())
 }
+
+export const setUrlState = debounce(setUrlStateImmediately, 500)

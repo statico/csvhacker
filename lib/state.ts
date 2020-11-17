@@ -23,13 +23,7 @@ export const inputConfigState = atom<InputConfigState>({
     ({ setSelf, onSet }) => {
       // @ts-ignore
       onSet(({ url }) => {
-        const state = { ...getUrlState() }
-        if (url) {
-          state.url = url
-        } else {
-          delete state.url
-        }
-        setUrlState(state)
+        setUrlState({ ...getUrlState(), url })
       })
 
       const read = () => {
