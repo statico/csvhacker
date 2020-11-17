@@ -32,8 +32,8 @@
     "react-window": "^1.8.6",
     "recoil": "^0.1.2",
     "rison-node": "^2.1.1",
-    "runtypes": "^5.0.1",
-    "xlsx": "^0.16.8"
+    "xlsx": "^0.16.8",
+    "yup": "^0.29.3"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.11",
@@ -51,6 +51,7 @@
     "@types/react-window": "^1.8.2",
     "@types/recoil": "^0.0.1",
     "@types/xlsx": "^0.0.36",
+    "@types/yup": "^0.29.9",
     "husky": "^4.3.0",
     "postcss-flexbugs-fixes": "^5.0.0",
     "postcss-preset-env": "^6.7.0",

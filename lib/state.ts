@@ -101,14 +101,19 @@ export const outputState = selector<Matrix>({
   key: "output",
   get: ({ get }) => {
     const input = get(inputState)
-    if (!input) return null
-    const instances = [...get(filterState)]
-    let ret = input
-    while (instances.length) {
-      const instance = instances.shift()
-      ret = applyFilterInstance(instance, ret)
+    try {
+      if (!input) return null
+      const instances = [...get(filterState)]
+      let ret = input
+      while (instances.length) {
+        const instance = instances.shift()
+        ret = applyFilterInstance(instance, ret)
+      }
+      return ret
+    } catch (err) {
+      console.log(`Applying filters failed: ${err}`)
+      return input
     }
-    return ret
   },
 })
 

@@ -9,7 +9,13 @@ import {
   OnDragStartResponder,
 } from "react-beautiful-dnd"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { AllFilters, createFilterInstance } from "../lib/filters"
+import {
+  AllFilters,
+  checkFilterInstanceConfig,
+  createFilterInstance,
+  FilterSpecification,
+  getFilterSpecification,
+} from "../lib/filters"
 import { filterState } from "../lib/state"
 import Tooltip from "./Tooltip"
 import classNames from "classnames"
@@ -32,7 +38,8 @@ const FilterView = ({ index }: { index: number }) => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
-  const filter = filters[index]
+  const instance = filters[index]
+
   const update = (value: any) => {
     const newFilters = [...filters]
     const f = filters[index]
@@ -40,40 +47,65 @@ const FilterView = ({ index }: { index: number }) => {
     setFilters(newFilters)
   }
 
-  switch (filter.type) {
-    case "head":
-      return (
-        <div>
-          <div className="font-bold block">Head</div>
-          <label>
-            Lines:{" "}
-            <input
-              className="border"
-              style={{ width: 50 }}
-              type="text"
-              value={filter.config.rows}
-              onChange={(e) => update({ rows: Number(e.target.value) || 0 })}
-            />
-          </label>
-        </div>
-      )
-    case "tail":
-      return (
-        <div>
-          <div className="font-bold">Tail</div>
-          <label>
-            Lines:{" "}
-            <input
-              className="border"
-              style={{ width: 50 }}
-              type="text"
-              value={filter.config.rows}
-              onChange={(e) => update({ rows: Number(e.target.value) || 0 })}
-            />
-          </label>
-        </div>
-      )
+  let isValid = true
+  let error = null
+  try {
+    checkFilterInstanceConfig(instance)
+  } catch (err) {
+    isValid = false
+    error = String(err)
   }
+
+  let spec: FilterSpecification
+  try {
+    spec = getFilterSpecification(instance.type)
+  } catch (err) {
+    return <div className="bg-red-800 text-white">{String(err)}</div>
+  }
+
+  const fields = spec.schema.describe().fields
+
+  return (
+    <div
+      className={classNames(
+        "p-2 transition-all duration-75 border",
+        error ? "border-red-600" : "border-transparent"
+      )}
+    >
+      <div className="font-bold block">{spec.title}</div>
+      {Object.keys(fields).map((key) => {
+        // @ts-ignore
+        const { type, meta } = fields[key]
+        switch (type) {
+          case "number":
+            return (
+              <label key={key}>
+                {meta.title}:
+                <input
+                  className="border ml-2 px-2"
+                  style={{ width: 50 }}
+                  placeholder={meta.placeholder}
+                  type="text"
+                  value={instance.config[key]}
+                  onChange={(e) =>
+                    update({ [key]: e.target.value.trim() || null })
+                  }
+                />
+              </label>
+            )
+          default:
+            return (
+              <div className="bg-red-800 text-white">
+                Unknown config tyep: ${type}
+              </div>
+            )
+        }
+      })}
+      {error && (
+        <div className="text-red-600 text-sm leading-tight mt-1">{error}</div>
+      )}
+    </div>
+  )
 }
 
 export const FilterList = ({
@@ -164,7 +196,7 @@ export const FilterList = ({
                           snapshot
                         )}
                       >
-                        {filter.name}
+                        {filter.title}
                       </div>
                     </Tooltip>
                   )}
@@ -195,7 +227,7 @@ export const FilterList = ({
                       key={i}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      className={`bg-white rounded-sm mb-2 p-2 block shadow`}
+                      className={`bg-white rounded-sm mb-2 block shadow`}
                       style={getStyle(
                         provided.draggableProps.style,
                         innerSnapshot
