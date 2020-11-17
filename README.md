@@ -28,6 +28,7 @@
 1. [x] Input options
 1. [x] Output options
 1. [x] Test with various data sources
+1. [ ] Debounce setUrlState
 1. [ ] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)

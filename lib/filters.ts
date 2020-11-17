@@ -1,46 +1,73 @@
-import { Record, Number, Runtype, Static } from "runtypes"
-
-export interface Filter {
-  key: string
-  name: string
-  description: string
-  configType: Runtype
-  default: any
-  transform: (matrix: Matrix, config: any) => Matrix
-}
-
-export const HeadConfig = Record({
-  count: Number,
-})
-
-export const TailConfig = Record({
-  count: Number,
-})
-
-export const Filters: Filter[] = [
+export const AllFilters = [
   {
-    key: "head",
+    type: "head",
     name: "Head",
     description: "Limit to N first rows",
-    configType: HeadConfig,
-    default: {
-      count: 100,
+    defaultConfig: {
+      rows: 100,
     },
-    transform: (input, config: Static<typeof HeadConfig>) => {
-      return input.slice(0, config.count)
+    transform(input: Matrix, config): Matrix {
+      return input.slice(0, config.rows)
     },
   },
-
   {
-    key: "tail",
+    type: "tail",
     name: "Tail",
     description: "Limit to N last rows",
-    configType: TailConfig,
-    default: {
-      count: 100,
+    defaultConfig: {
+      rows: 100,
     },
-    transform: (input, config: Static<typeof TailConfig>) => {
-      return input.slice(input.length - config.count)
+    transform(input: Matrix, config): Matrix {
+      return input.slice(0, config.rows)
     },
   },
 ]
+
+export const FiltersByType = {}
+for (const f of AllFilters) {
+  FiltersByType[f.type] = f
+}
+
+export interface FilterInstance {
+  type: string
+  config: any
+}
+
+export const createFilterInstance = (type: string): FilterInstance => {
+  return { type, config: { ...FiltersByType[type].defaultConfig } }
+}
+
+export const applyFilterInstance = (
+  instance: FilterInstance,
+  input: Matrix
+): Matrix => {
+  const filter = FiltersByType[instance.type]
+  return filter.transform(input, instance.config)
+}
+
+export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
+  instances = Array.from(instances).slice() // HACK: Instances is not an interable?
+  return instances.map((instance) => {
+    const spec = FiltersByType[instance.type]
+    if (!spec) throw new Error(`Unknown filter type: ${instance.type}`)
+
+    const defaults = spec.defaultConfig
+    // const config = { ...instance.config }
+    const item = JSON.parse(JSON.stringify(instance.config)) // HACK: config is not iterable?
+    Object.keys(item).forEach((key) => {
+      if (item[key] === defaults[key]) delete item[key]
+    })
+    item.type = instance.type
+    return item
+  })
+}
+
+export const deserializeFilterInstances = (items: any): FilterInstance[] => {
+  if (!Array.isArray(items)) throw new Error(`Array expected`)
+  return items.map((item) => {
+    const instance = createFilterInstance(item.type)
+    delete item.type
+    instance.config = { ...instance.config, config: item }
+    return instance
+  })
+}

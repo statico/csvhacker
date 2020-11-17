@@ -1,5 +1,13 @@
+import { create } from "domain"
 import Papa from "papaparse"
 import { atom, selector } from "recoil"
+import {
+  applyFilterInstance,
+  createFilterInstance,
+  deserializeFilterInstances,
+  FilterInstance,
+  serializeFiltersInstances,
+} from "./filters"
 import { getUrlState, setUrlState } from "./url"
 
 interface InputConfigState {
@@ -28,7 +36,7 @@ export const inputConfigState = atom<InputConfigState>({
         const { url } = getUrlState()
         if (url) setSelf({ url })
       }
-      setTimeout(read, 0) // TODO: Why doesn't read() just work?
+      setTimeout(read, 0) // HACK: Why doesn't read() just work?
 
       window.addEventListener("hashchange", read)
       return () => {
@@ -59,25 +67,24 @@ export const inputState = selector<Matrix>({
   },
 })
 
-export const filterState = atom<any[]>({
+export const filterState = atom<FilterInstance[]>({
   key: "filters",
-  default: [
-    {
-      type: "head",
-      count: 100,
-    },
-  ],
+  default: [createFilterInstance("head")],
   effects_UNSTABLE: [
     ({ setSelf, onSet }) => {
-      onSet((filters) => {
-        setUrlState({ ...getUrlState(), filters })
+      onSet((instances) => {
+        if (!Array.isArray(instances)) return
+        setUrlState({
+          ...getUrlState(),
+          filters: serializeFiltersInstances(instances),
+        })
       })
 
       const read = () => {
-        const { filters } = getUrlState()
-        if (filters) setSelf(filters)
+        const { filters: instances } = getUrlState()
+        if (instances) setSelf(deserializeFilterInstances(instances))
       }
-      setTimeout(read, 0) // TODO: Why doesn't read() just work?
+      setTimeout(read, 0) // HACK: Why doesn't read() just work?
 
       window.addEventListener("hashchange", read)
       return () => {
@@ -101,20 +108,11 @@ export const outputState = selector<Matrix>({
   get: ({ get }) => {
     const input = get(inputState)
     if (!input) return null
-    const filters = [...get(filterState)]
+    const instances = [...get(filterState)]
     let ret = input
-    while (filters.length) {
-      const filter = filters.shift()
-      switch (filter.type) {
-        case "head":
-          ret = ret.slice(0, filter.count)
-          break
-        case "tail":
-          ret = ret.slice(ret.length - filter.count)
-          break
-        default:
-          throw new Error(`Unknown filter type: ${filter.type}`)
-      }
+    while (instances.length) {
+      const instance = instances.shift()
+      ret = applyFilterInstance(instance, ret)
     }
     return ret
   },

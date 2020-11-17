@@ -11,8 +11,8 @@ const Tooltip = ({
   disabled?: boolean
 }) => (
   <TippyTooltip
-    disabled={disabled}
     title={tip}
+    disabled={disabled}
     delay={350}
     duration={0}
     size="small"

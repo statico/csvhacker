@@ -8,7 +8,7 @@ import {
   OnDragEndResponder,
 } from "react-beautiful-dnd"
 import { useRecoilValue, useSetRecoilState } from "recoil"
-import { Filters } from "../lib/filters"
+import { AllFilters, createFilterInstance } from "../lib/filters"
 import { filterState } from "../lib/state"
 import Tooltip from "./Tooltip"
 
@@ -31,9 +31,10 @@ const FilterView = ({ index }: { index: number }) => {
 
   const filter = filters[index]
   const update = (value: any) => {
-    const f = [...filters]
-    f[index] = { ...filter, ...value }
-    setFilters(f)
+    const newFilters = [...filters]
+    const f = filters[index]
+    newFilters[index] = { ...f, config: { ...f.config, ...value } }
+    setFilters(newFilters)
   }
 
   switch (filter.type) {
@@ -47,8 +48,8 @@ const FilterView = ({ index }: { index: number }) => {
               className="border"
               style={{ width: 50 }}
               type="text"
-              value={filter.count}
-              onChange={(e) => update({ count: Number(e.target.value) || 0 })}
+              value={filter.config.rows}
+              onChange={(e) => update({ rows: Number(e.target.value) || 0 })}
             />
           </label>
         </div>
@@ -63,8 +64,8 @@ const FilterView = ({ index }: { index: number }) => {
               className="border"
               style={{ width: 50 }}
               type="text"
-              value={filter.count}
-              onChange={(e) => update({ count: Number(e.target.value) || 0 })}
+              value={filter.config.rows}
+              onChange={(e) => update({ rows: Number(e.target.value) || 0 })}
             />
           </label>
         </div>
@@ -78,7 +79,7 @@ export const FilterList = () => {
 
   const addFilter = (type: string, index: number) => {
     const f = [...filters]
-    f.splice(index, 0, { type, count: 5 })
+    f.splice(index, 0, createFilterInstance(type))
     setFilters(f)
   }
 
@@ -121,11 +122,11 @@ export const FilterList = () => {
               className="bg-blue-200 p-2"
               style={{ width: 100 }}
             >
-              {Filters.map((filter, index) => (
+              {AllFilters.map((filter, index) => (
                 <Draggable
-                  draggableId={filter.key}
+                  draggableId={filter.type}
                   index={index}
-                  key={filter.key}
+                  key={filter.type}
                 >
                   {(
                     provided: DraggableProvided,
@@ -160,7 +161,7 @@ export const FilterList = () => {
         <Droppable droppableId="filters">
           {(provided, snapshot) => (
             <div
-              className="shadow-inner overflow-y-scroll p-2"
+              className="shadow-inner overflow-y-auto p-2"
               ref={provided.innerRef}
               style={{ width: 200 }}
             >
