@@ -1,6 +1,9 @@
 @tailwind base;
 
 /* Write your own custom base styles here */
+html {
+  font-size: 14px;
+}
 
 /* Start purging... */
 @tailwind components;
