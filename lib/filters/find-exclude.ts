@@ -1,18 +1,11 @@
-import parseNumericRange from "parse-numeric-range"
 import * as yup from "yup"
+import { columnListSchema, parseColumnList, regexSchema } from "./common"
 import { FilterSpecification, Matrix } from "./types"
 
 const schema = yup.object({
   pattern: yup.string().nullable(),
-  columns: yup
-    .string()
-    .nullable()
-    .matches(/^[\d,-]*$/)
-    .meta({ placeholder: "Any" }),
-  regex: yup
-    .boolean()
-    .default(false)
-    .meta({ title: "RegExp", helpLink: "https://regexr.com/" }),
+  columns: columnListSchema("Any"),
+  regex: regexSchema,
   caseSensitive: yup.boolean().default(false),
 })
 
@@ -21,10 +14,7 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
   config: yup.InferType<typeof schema>
 ) => {
   const { columns, pattern, regex, caseSensitive } = config
-
-  const colNums = columns
-    ? parseNumericRange(columns.trim()).map((n) => n - 1)
-    : []
+  const colnums = parseColumnList(columns)
 
   // This is repetitive because I hope the VM will optimize this pretty well. (shrug)
   let fn: (str: string) => boolean
@@ -55,11 +45,11 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
   const output: Matrix = []
 
   if (invert) {
-    if (colNums.length) {
+    if (colnums.length) {
       row: for (let i = 0; i < input.length; i++) {
         const row = input[i]
-        col: for (let j = 0; j < colNums.length; j++) {
-          const k = colNums[j]
+        col: for (let j = 0; j < colnums.length; j++) {
+          const k = colnums[j]
           if (k < 0 || k >= row.length) continue col
           if (!fn(row[k])) continue row
         }
@@ -75,11 +65,11 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
       }
     }
   } else {
-    if (colNums.length) {
+    if (colnums.length) {
       row: for (let i = 0; i < input.length; i++) {
         const row = input[i]
-        col: for (let j = 0; j < colNums.length; j++) {
-          const k = colNums[j]
+        col: for (let j = 0; j < colnums.length; j++) {
+          const k = colnums[j]
           if (k < 0 || k >= row.length) continue col
           if (fn(row[k])) {
             output.push(row)

@@ -1,13 +1,9 @@
-import parseNumericRange from "parse-numeric-range"
 import * as yup from "yup"
+import { columnListSchema, parseColumnList } from "./common"
 import { FilterSpecification } from "./types"
 
 const schema = yup.object({
-  columns: yup
-    .string()
-    .nullable()
-    .matches(/^[\d,-]*$/)
-    .meta({ placeholder: "All" }),
+  columns: columnListSchema("All"),
 })
 
 export const trim: FilterSpecification = {
@@ -17,15 +13,11 @@ export const trim: FilterSpecification = {
   schema,
   transform(input, config: yup.InferType<typeof schema>) {
     const { columns } = config
+    const colset = new Set(parseColumnList(columns))
 
-    const colNums = columns
-      ? parseNumericRange(columns.trim()).map((n) => n - 1)
-      : []
-
-    if (colNums.length) {
-      const c = new Set(colNums)
+    if (colset.size) {
       return input.map((row) =>
-        row.map((str, i) => (c.has(i) ? str.trim() : str))
+        row.map((str, i) => (colset.has(i) ? str.trim() : str))
       )
     } else {
       return input.map((row) => row.map((str) => str.trim()))

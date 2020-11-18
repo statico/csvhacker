@@ -1,19 +1,12 @@
-import parseNumericRange from "parse-numeric-range"
 import * as yup from "yup"
+import { columnListSchema, parseColumnList, regexSchema } from "./common"
 import { FilterSpecification } from "./types"
 
 const schema = yup.object({
-  columns: yup
-    .string()
-    .nullable()
-    .matches(/^[\d,-]*$/)
-    .meta({ placeholder: "All" }),
+  columns: columnListSchema("All"),
   pattern: yup.string().nullable(),
   replacement: yup.string().nullable(),
-  regex: yup
-    .boolean()
-    .default(false)
-    .meta({ title: "RegExp", helpLink: "https://regexr.com/" }),
+  regex: regexSchema,
   caseSensitive: yup.boolean().default(false),
 })
 
@@ -24,10 +17,7 @@ export const edit: FilterSpecification = {
   schema,
   transform(input, config: yup.InferType<typeof schema>) {
     const { columns, pattern, replacement, regex, caseSensitive } = config
-
-    const colNums = columns
-      ? parseNumericRange(columns.trim()).map((n) => n - 1)
-      : []
+    const colset = new Set(parseColumnList(columns))
 
     let fn: (str: string) => string
     if (regex) {
@@ -37,9 +27,10 @@ export const edit: FilterSpecification = {
       fn = (str: string) => str.replaceAll(pattern, replacement)
     }
 
-    if (colNums.length) {
-      const c = new Set(colNums)
-      return input.map((row) => row.map((str, i) => (c.has(i) ? fn(str) : str)))
+    if (colset.size) {
+      return input.map((row) =>
+        row.map((str, i) => (colset.has(i) ? fn(str) : str))
+      )
     } else {
       return input.map((row) => row.map(fn))
     }
