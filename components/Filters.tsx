@@ -89,7 +89,7 @@ const FilterView = ({ index }: { index: number }) => {
       )}
     >
       <div className="flex flex-row items-center mb-2">
-        <div className="font-bold">{spec.title}</div>
+        <div className="font-bold truncate">{spec.title}</div>
         <div
           className="flex flex-grow items-center justify-end text-gray-400 hover:text-gray-600 cursor-pointer"
           onClick={deleteMe}
@@ -254,6 +254,7 @@ export const FilterList = ({
                           border border-transparent hover:border-gray-300
                           transition-all duration-100
                           block mb-2 p-2
+                          truncate
                         `}
                         style={getStyle(
                           dragProvided.draggableProps.style,
