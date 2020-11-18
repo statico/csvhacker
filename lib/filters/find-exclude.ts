@@ -27,7 +27,7 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
     : []
 
   // This is repetitive because I hope the VM will optimize this pretty well. (shrug)
-  let fn: (string) => boolean
+  let fn: (str: string) => boolean
   if (regex) {
     const re = new RegExp(pattern.trim(), caseSensitive ? "" : "i")
     if (invert) {

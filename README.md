@@ -31,7 +31,7 @@
 1. [x] Debounce setUrlState
 1. [x] Filters: find, exclude
 1. [x] Filters: pick (columns)
-1. [ ] Filters: edit
+1. [x] Filters: edit
 1. [ ] Filters: rmnew, trim, upper, lower
 1. [ ] Filters: split (on character), split (on fixed size)
 1. [ ] Filters: sort

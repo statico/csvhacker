@@ -1,14 +1,16 @@
+import { edit } from "./edit"
 import { exclude, find } from "./find-exclude"
 import { head, tail } from "./head-tail"
 import { pick } from "./pick"
 import { FilterInstance, FilterSpecification, Matrix } from "./types"
 
 export const AllFilters: FilterSpecification[] = [
-  head,
-  tail,
-  find,
+  edit,
   exclude,
+  find,
+  head,
   pick,
+  tail,
 ]
 
 AllFilters.sort((a, b) => a.title.localeCompare(b.title))
