@@ -11,6 +11,8 @@ export const AllFilters: FilterSpecification[] = [
   pick,
 ]
 
+AllFilters.sort((a, b) => a.title.localeCompare(b.title))
+
 const FiltersByType: { [key: string]: FilterSpecification } = {}
 for (const f of AllFilters) {
   FiltersByType[f.type] = f
