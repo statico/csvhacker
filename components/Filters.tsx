@@ -16,9 +16,9 @@ import {
   AllFilters,
   checkFilterInstanceConfig,
   createFilterInstance,
-  FilterSpecification,
   getFilterSpecification,
 } from "../lib/filters"
+import { FilterSpecification } from "../lib/filters/types"
 import { filterState } from "../lib/state"
 import Tooltip from "./Tooltip"
 
@@ -47,7 +47,7 @@ const FilterView = ({ index }: { index: number }) => {
 
   const instance = filters[index]
 
-  const update = (value: any) => {
+  const updateMe = (value: any) => {
     const newFilters = [...filters]
     const f = filters[index]
     newFilters[index] = { ...f, config: { ...f.config, ...value } }
@@ -117,7 +117,7 @@ const FilterView = ({ index }: { index: number }) => {
                   type="text"
                   value={instance.config[key] || ""}
                   onChange={(e) =>
-                    update({ [key]: e.target.value.trim() || null })
+                    updateMe({ [key]: e.target.value.trim() || null })
                   }
                 />
               </label>
@@ -132,7 +132,7 @@ const FilterView = ({ index }: { index: number }) => {
                 <input
                   type="checkbox"
                   checked={Boolean(instance.config[key])}
-                  onChange={(e) => update({ [key]: e.target.checked })}
+                  onChange={(e) => updateMe({ [key]: e.target.checked })}
                 />
                 {meta.helpLink && (
                   <span className="ml-2 flex-grow text-right">

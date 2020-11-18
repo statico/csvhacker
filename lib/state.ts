@@ -4,10 +4,9 @@ import {
   applyFilterInstance,
   createFilterInstance,
   deserializeFilterInstances,
-  FilterInstance,
-  Matrix,
   serializeFiltersInstances,
 } from "./filters"
+import { FilterInstance, Matrix } from "./filters/types"
 import { getUrlState, setUrlState } from "./url"
 
 interface InputConfigState {
