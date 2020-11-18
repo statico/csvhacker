@@ -4,15 +4,18 @@ import { head, tail } from "./head-tail"
 import { pick } from "./pick"
 import { trim } from "./trim"
 import { FilterInstance, FilterSpecification, Matrix } from "./types"
+import { lower, upper } from "./upper-lower"
 
 export const AllFilters: FilterSpecification[] = [
   edit,
   exclude,
   find,
   head,
+  lower,
   pick,
   tail,
   trim,
+  upper,
 ]
 
 AllFilters.sort((a, b) => a.title.localeCompare(b.title))
