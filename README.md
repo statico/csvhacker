@@ -29,7 +29,7 @@
 1. [x] Output options
 1. [x] Test with various data sources
 1. [x] Debounce setUrlState
-1. [ ] Filters: find, exclude
+1. [x] Filters: find, exclude
 1. [ ] Filters: edit
 1. [ ] Filters: pick (columns)
 1. [ ] Filters: rmnew, trim, upper, lower
@@ -37,6 +37,8 @@
 1. [ ] Filters: sort
 1. [ ] Filters: date format
 1. [ ] Sticky header row
+1. [ ] Debounce input processing
+1. [ ] URLs don't paste well in Slack
 1. [ ] File or URL modal
 1. [ ] UI/UX pass
 1. [ ] XLSX import

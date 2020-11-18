@@ -1,3 +1,5 @@
+import classNames from "classnames"
+import { useState } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -8,6 +10,7 @@ import {
   OnDragEndResponder,
   OnDragStartResponder,
 } from "react-beautiful-dnd"
+import { FaTimes } from "react-icons/fa"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   AllFilters,
@@ -18,8 +21,6 @@ import {
 } from "../lib/filters"
 import { filterState } from "../lib/state"
 import Tooltip from "./Tooltip"
-import classNames from "classnames"
-import { useState } from "react"
 
 // https://stackoverflow.com/a/4149393/102704
 const titleCase = (str: string) =>
@@ -53,6 +54,12 @@ const FilterView = ({ index }: { index: number }) => {
     setFilters(newFilters)
   }
 
+  const deleteMe = () => {
+    const f = [...filters]
+    f.splice(index, 1)
+    setFilters(f)
+  }
+
   let isValid = true
   let error = null
   try {
@@ -80,7 +87,15 @@ const FilterView = ({ index }: { index: number }) => {
         error ? "border-red-600" : "border-transparent"
       )}
     >
-      <div className="font-bold block">{spec.title}</div>
+      <div className="flex flex-row items-center mb-2">
+        <div className="font-bold">{spec.title}</div>
+        <div
+          className="flex flex-grow items-center justify-end text-gray-400 hover:text-gray-600 cursor-pointer"
+          onClick={deleteMe}
+        >
+          <FaTimes />
+        </div>
+      </div>
       {Object.keys(fields).map((key) => {
         // @ts-ignore - `meta` property is missing in SchemaFieldDescription
         const { type, meta = {} } = fields[key]
@@ -119,6 +134,17 @@ const FilterView = ({ index }: { index: number }) => {
                   checked={Boolean(instance.config[key])}
                   onChange={(e) => update({ [key]: e.target.checked })}
                 />
+                {meta.helpLink && (
+                  <span className="ml-2 flex-grow text-right">
+                    <a
+                      href={meta.helpLink}
+                      target="_blank"
+                      className="text-xs underline"
+                    >
+                      Help?
+                    </a>
+                  </span>
+                )}
               </label>
             )
 

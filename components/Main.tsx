@@ -1,6 +1,6 @@
 import { ReactNode, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import { FaCloudUploadAlt, FaGithub, FaQuestionCircle } from "react-icons/fa"
+import { FaCloudUploadAlt, FaGithub, FaInfoCircle } from "react-icons/fa"
 import { useSetRecoilState } from "recoil"
 import { inputConfigState } from "../lib/state"
 import packageJSON from "../package.json"
@@ -60,9 +60,6 @@ const Main = () => {
           <header className="flex flex-row items-center p-3 bg-gray-800 text-lg">
             <HeaderLink href={url}>CSVHacker v{packageJSON.version}</HeaderLink>
             <div className="flex-grow flex flex-row justify-end items-center">
-              <HeaderLink href={url + "#readme"} title="README for CSVHacker">
-                <FaQuestionCircle className="ml-1" />
-              </HeaderLink>
               <HeaderLink href={url} title="View source on GitHub">
                 <FaGithub className="ml-1" />
               </HeaderLink>

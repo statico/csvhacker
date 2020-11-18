@@ -10,15 +10,19 @@ const HeadTailFilterSchema = yup
   .object({
     rows: yup.number().positive().integer().nullable().meta({
       placeholder: "All",
-      help: "Enter the number of rows to retain, or leave blank for all rows.",
+      helpText:
+        "Enter the number of rows to retain, or leave blank for all rows.",
     }),
   })
   .defined()
 
 const FindExcludeFilterSchema = yup.object({
   pattern: yup.string().nullable(),
-  columns: yup.string().nullable().meta({ placeholder: "All" }),
-  regex: yup.boolean().default(false),
+  columns: yup.string().nullable().meta({ placeholder: "Any" }),
+  regex: yup
+    .boolean()
+    .default(false)
+    .meta({ title: "RegExp", helpLink: "https://regexr.com/" }),
   caseSensitive: yup.boolean().default(false),
 })
 
@@ -32,6 +36,93 @@ export interface FilterSpecification {
   description: string
   schema: yup.Schema<any>
   transform: (input: Matrix, config: any) => Matrix
+}
+
+const makeFindExcludeTransform = (invert: boolean) => (
+  input: Matrix,
+  config: yup.InferType<typeof FindExcludeFilterSchema>
+): Matrix => {
+  const { columns, pattern, regex, caseSensitive } = config
+
+  const colNums = columns ? columns.split(/,\s*/).map((c) => Number(c) - 1) : []
+
+  // This is repetitive because I hope the VM will optimize this pretty well. (shrug)
+  let fn: (string) => boolean
+  if (regex) {
+    const re = new RegExp(pattern.trim(), caseSensitive ? "" : "i")
+    if (invert) {
+      fn = (str: string) => !re.test(str)
+    } else {
+      fn = (str: string) => str && re.test(str)
+    }
+  } else {
+    if (caseSensitive) {
+      if (invert) {
+        fn = (str: string) => !str?.includes(pattern)
+      } else {
+        fn = (str: string) => str?.includes(pattern)
+      }
+    } else {
+      const lowerCasePattern = pattern.toLowerCase()
+      if (invert) {
+        fn = (str: string) => !str?.toLowerCase().includes(lowerCasePattern)
+      } else {
+        fn = (str: string) => str?.toLowerCase().includes(lowerCasePattern)
+      }
+    }
+  }
+
+  const output: Matrix = []
+
+  if (invert) {
+    if (colNums.length) {
+      row: for (let i = 0; i < input.length; i++) {
+        const row = input[i]
+        col: for (let j = 0; j < colNums.length; j++) {
+          const k = colNums[j]
+          if (!fn(row[k])) {
+            continue row
+          }
+        }
+        output.push(row)
+      }
+    } else {
+      row: for (let i = 0; i < input.length; i++) {
+        const row = input[i]
+        col: for (let j = 0; j < row.length; j++) {
+          if (!fn(row[j])) {
+            continue row
+          }
+        }
+        output.push(row)
+      }
+    }
+  } else {
+    if (colNums.length) {
+      row: for (let i = 0; i < input.length; i++) {
+        const row = input[i]
+        col: for (let j = 0; j < colNums.length; j++) {
+          const k = colNums[j]
+          if (fn(row[k])) {
+            output.push(row)
+            break col
+          }
+        }
+      }
+    } else {
+      row: for (let i = 0; i < input.length; i++) {
+        const row = input[i]
+        col: for (let j = 0; j < row.length; j++) {
+          if (fn(row[j])) {
+            output.push(row)
+            break col
+          }
+        }
+      }
+    }
+  }
+
+  return output
 }
 
 export const AllFilters: FilterSpecification[] = [
@@ -68,52 +159,15 @@ export const AllFilters: FilterSpecification[] = [
     title: "Find",
     description: "Find rows matching a given pattern in all or some columns",
     schema: FindExcludeFilterSchema,
-    transform(
-      input: Matrix,
-      config: yup.InferType<typeof FindExcludeFilterSchema>
-    ): Matrix {
-      const { columns, pattern, regex, caseSensitive } = config
+    transform: makeFindExcludeTransform(false),
+  },
 
-      const colNums = columns
-        ? columns.split(/,\s*/).map((c) => Number(c) - 1)
-        : []
-
-      let fn: (string) => boolean
-      if (regex) {
-        const re = new RegExp(pattern, caseSensitive ? "" : "i")
-        fn = (str: string) => str && re.test(str)
-      } else {
-        if (caseSensitive) {
-          fn = (str: string) => str?.includes(pattern)
-        } else {
-          const lowerCasePattern = pattern.toLowerCase()
-          fn = (str: string) => str?.toLowerCase().includes(lowerCasePattern)
-        }
-      }
-
-      const output: Matrix = []
-
-      if (colNums.length) {
-        for (let i = 0; i < input.length; i++) {
-          const row = input[i]
-          for (let j = 0; j < colNums.length; j++) {
-            const k = colNums[j]
-            if (fn(row[k])) output.push(row)
-            break
-          }
-        }
-      } else {
-        for (let i = 0; i < input.length; i++) {
-          const row = input[i]
-          for (let j = 0; j < row.length; j++) {
-            if (fn(row[j])) output.push(row)
-            break
-          }
-        }
-      }
-
-      return output
-    },
+  {
+    type: "exclude",
+    title: "Exclude",
+    description: "Exclude rows matching a given pattern in all or some columns",
+    schema: FindExcludeFilterSchema,
+    transform: makeFindExcludeTransform(true),
   },
 ]
 
@@ -162,11 +216,11 @@ export const applyFilterInstance = (
 }
 
 export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
-  instances = Array.from(instances).slice() // HACK: Instances is not an interable?
+  instances = Array.from(instances).slice() // HACK: Recoil.js - Instances is not an interable?
   return instances.map((instance) => {
     const defaults = getFilterConfigDefaults(instance.type)
     // const config = { ...instance.config }
-    const item = JSON.parse(JSON.stringify(instance.config)) // HACK: config is not iterable?
+    const item = JSON.parse(JSON.stringify(instance.config)) // HACK: Recoil.js - config is not iterable?
     Object.keys(item).forEach((key) => {
       if (item[key] == null || item[key] === defaults[key]) delete item[key]
     })
