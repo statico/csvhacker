@@ -2,6 +2,7 @@ import { edit } from "./edit"
 import { exclude, find } from "./find-exclude"
 import { head, tail } from "./head-tail"
 import { pick } from "./pick"
+import { rmnew } from "./rmnew"
 import { trim } from "./trim"
 import { FilterInstance, FilterSpecification, Matrix } from "./types"
 import { lower, upper } from "./upper-lower"
@@ -13,6 +14,7 @@ export const AllFilters: FilterSpecification[] = [
   head,
   lower,
   pick,
+  rmnew,
   tail,
   trim,
   upper,
