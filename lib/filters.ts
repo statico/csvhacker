@@ -1,4 +1,5 @@
 import * as yup from "yup"
+import parseNumericRange from "parse-numeric-range"
 
 export type Matrix = any[][]
 
@@ -18,7 +19,11 @@ const HeadTailFilterSchema = yup
 
 const FindExcludeFilterSchema = yup.object({
   pattern: yup.string().nullable(),
-  columns: yup.string().nullable().meta({ placeholder: "Any" }),
+  columns: yup
+    .string()
+    .nullable()
+    .matches(/^[\d,-]*$/)
+    .meta({ placeholder: "Any" }),
   regex: yup
     .boolean()
     .default(false)
@@ -44,7 +49,9 @@ const makeFindExcludeTransform = (invert: boolean) => (
 ): Matrix => {
   const { columns, pattern, regex, caseSensitive } = config
 
-  const colNums = columns ? columns.split(/,\s*/).map((c) => Number(c) - 1) : []
+  const colNums = columns
+    ? parseNumericRange(columns.trim()).map((n) => n - 1)
+    : []
 
   // This is repetitive because I hope the VM will optimize this pretty well. (shrug)
   let fn: (string) => boolean
@@ -80,9 +87,8 @@ const makeFindExcludeTransform = (invert: boolean) => (
         const row = input[i]
         col: for (let j = 0; j < colNums.length; j++) {
           const k = colNums[j]
-          if (!fn(row[k])) {
-            continue row
-          }
+          if (k < 0 || k >= row.length) continue col
+          if (!fn(row[k])) continue row
         }
         output.push(row)
       }
@@ -90,9 +96,7 @@ const makeFindExcludeTransform = (invert: boolean) => (
       row: for (let i = 0; i < input.length; i++) {
         const row = input[i]
         col: for (let j = 0; j < row.length; j++) {
-          if (!fn(row[j])) {
-            continue row
-          }
+          if (!fn(row[j])) continue row
         }
         output.push(row)
       }
@@ -103,6 +107,7 @@ const makeFindExcludeTransform = (invert: boolean) => (
         const row = input[i]
         col: for (let j = 0; j < colNums.length; j++) {
           const k = colNums[j]
+          if (k < 0 || k >= row.length) continue col
           if (fn(row[k])) {
             output.push(row)
             break col
