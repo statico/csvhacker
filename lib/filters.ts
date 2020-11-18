@@ -107,7 +107,7 @@ export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
     // const config = { ...instance.config }
     const item = JSON.parse(JSON.stringify(instance.config)) // HACK: config is not iterable?
     Object.keys(item).forEach((key) => {
-      if (item[key] === defaults[key]) delete item[key]
+      if (item[key] == null || item[key] === defaults[key]) delete item[key]
     })
     item.type = instance.type
     return item
@@ -119,7 +119,7 @@ export const deserializeFilterInstances = (items: any): FilterInstance[] => {
   return items.map((item) => {
     const instance = createFilterInstance(item.type)
     delete item.type
-    instance.config = { ...instance.config, config: item }
+    instance.config = { ...instance.config, ...item }
     return instance
   })
 }
