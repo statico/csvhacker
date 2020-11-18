@@ -1,26 +1,30 @@
 import * as yup from "yup"
 
-const HeadFilterSchema = yup
+export type Matrix = any[][]
+
+// ------------------------------------------------------------------------------
+// CONFIGURATION SCHEMAS
+// ------------------------------------------------------------------------------
+
+const HeadTailFilterSchema = yup
   .object({
-    rows: yup
-      .number()
-      .positive()
-      .integer()
-      .nullable()
-      .meta({ title: "Rows", placeholder: "All" }),
+    rows: yup.number().positive().integer().nullable().meta({
+      placeholder: "All",
+      help: "Enter the number of rows to retain, or leave blank for all rows.",
+    }),
   })
   .defined()
 
-const TailFilterSchema = yup
-  .object({
-    rows: yup
-      .number()
-      .positive()
-      .integer()
-      .nullable()
-      .meta({ title: "Rows", placeholder: "All" }),
-  })
-  .defined()
+const FindExcludeFilterSchema = yup.object({
+  pattern: yup.string().nullable(),
+  columns: yup.string().nullable().meta({ placeholder: "All" }),
+  regex: yup.boolean().default(false),
+  caseSensitive: yup.boolean().default(false),
+})
+
+// ------------------------------------------------------------------------------
+// FILTER SPECIFICATIONS
+// ------------------------------------------------------------------------------
 
 export interface FilterSpecification {
   type: string
@@ -35,10 +39,10 @@ export const AllFilters: FilterSpecification[] = [
     type: "head",
     title: "Head",
     description: "Limit to N first rows",
-    schema: HeadFilterSchema,
+    schema: HeadTailFilterSchema,
     transform(
       input: Matrix,
-      config: yup.InferType<typeof HeadFilterSchema>
+      config: yup.InferType<typeof HeadTailFilterSchema>
     ): Matrix {
       const { rows } = config
       return rows != null ? input.slice(0, rows) : input
@@ -49,18 +53,75 @@ export const AllFilters: FilterSpecification[] = [
     type: "tail",
     title: "Tail",
     description: "Limit to N last rows",
-    schema: TailFilterSchema,
+    schema: HeadTailFilterSchema,
     transform(
       input: Matrix,
-      config: yup.InferType<typeof TailFilterSchema>
+      config: yup.InferType<typeof HeadTailFilterSchema>
     ): Matrix {
       const { rows } = config
       return rows != null ? input.slice(input.length - rows) : input
     },
   },
+
+  {
+    type: "find",
+    title: "Find",
+    description: "Find rows matching a given pattern in all or some columns",
+    schema: FindExcludeFilterSchema,
+    transform(
+      input: Matrix,
+      config: yup.InferType<typeof FindExcludeFilterSchema>
+    ): Matrix {
+      const { columns, pattern, regex, caseSensitive } = config
+
+      const colNums = columns
+        ? columns.split(/,\s*/).map((c) => Number(c) - 1)
+        : []
+
+      let fn: (string) => boolean
+      if (regex) {
+        const re = new RegExp(pattern, caseSensitive ? "" : "i")
+        fn = (str: string) => str && re.test(str)
+      } else {
+        if (caseSensitive) {
+          fn = (str: string) => str?.includes(pattern)
+        } else {
+          const lowerCasePattern = pattern.toLowerCase()
+          fn = (str: string) => str?.toLowerCase().includes(lowerCasePattern)
+        }
+      }
+
+      const output: Matrix = []
+
+      if (colNums.length) {
+        for (let i = 0; i < input.length; i++) {
+          const row = input[i]
+          for (let j = 0; j < colNums.length; j++) {
+            const k = colNums[j]
+            if (fn(row[k])) output.push(row)
+            break
+          }
+        }
+      } else {
+        for (let i = 0; i < input.length; i++) {
+          const row = input[i]
+          for (let j = 0; j < row.length; j++) {
+            if (fn(row[j])) output.push(row)
+            break
+          }
+        }
+      }
+
+      return output
+    },
+  },
 ]
 
-export const FiltersByType: { [key: string]: FilterSpecification } = {}
+// ------------------------------------------------------------------------------
+// HELPER METHODS
+// ------------------------------------------------------------------------------
+
+const FiltersByType: { [key: string]: FilterSpecification } = {}
 for (const f of AllFilters) {
   FiltersByType[f.type] = f
 }

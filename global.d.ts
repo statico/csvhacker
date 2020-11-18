@@ -1,1 +1,0 @@
-type Matrix = any[][]

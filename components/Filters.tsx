@@ -21,6 +21,12 @@ import Tooltip from "./Tooltip"
 import classNames from "classnames"
 import { useState } from "react"
 
+// https://stackoverflow.com/a/4149393/102704
+const titleCase = (str: string) =>
+  str.replace(/([A-Z])/g, " $1").replace(/^./, function (str) {
+    return str.toUpperCase()
+  })
+
 const getStyle = (
   style: DraggableProvidedDraggableProps["style"],
   snapshot: DraggableStateSnapshot
@@ -65,38 +71,61 @@ const FilterView = ({ index }: { index: number }) => {
 
   const fields = spec.schema.describe().fields
 
+  // TODO: Tooltips
+
   return (
     <div
       className={classNames(
-        "p-2 transition-all duration-75 border",
+        "p-2 border",
         error ? "border-red-600" : "border-transparent"
       )}
     >
       <div className="font-bold block">{spec.title}</div>
       {Object.keys(fields).map((key) => {
-        // @ts-ignore
-        const { type, meta } = fields[key]
+        // @ts-ignore - `meta` property is missing in SchemaFieldDescription
+        const { type, meta = {} } = fields[key]
+
         switch (type) {
           case "number":
+          case "string":
             return (
-              <label key={key}>
-                {meta.title}:
+              <label key={key} className="flex flex-row items-center mb-1">
+                <span className="mr-1">
+                  {meta.title ? meta.title : titleCase(key)}:
+                </span>
                 <input
-                  className="border ml-2 px-2"
-                  style={{ width: 50 }}
+                  className={classNames(
+                    "border px-2 min-w-0",
+                    type === "string" ? "flex-grow" : "max-w-xs"
+                  )}
                   placeholder={meta.placeholder}
                   type="text"
-                  value={instance.config[key]}
+                  value={instance.config[key] || ""}
                   onChange={(e) =>
                     update({ [key]: e.target.value.trim() || null })
                   }
                 />
               </label>
             )
+
+          case "boolean":
+            return (
+              <label key={key} className="flex flex-row items-center mb-1">
+                <span className="mr-1">
+                  {meta.title ? meta.title : titleCase(key)}:
+                </span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(instance.config[key])}
+                  onChange={(e) => update({ [key]: e.target.checked })}
+                />
+              </label>
+            )
+
           default:
             return (
-              <div className="bg-red-800 text-white">
-                Unknown config tyep: ${type}
+              <div key={key} className="bg-red-800 text-white text-xs">
+                Unknown field type: {type}
               </div>
             )
         }

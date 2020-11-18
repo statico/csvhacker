@@ -1,4 +1,3 @@
-import { create } from "domain"
 import Papa from "papaparse"
 import { atom, selector } from "recoil"
 import {
@@ -6,6 +5,7 @@ import {
   createFilterInstance,
   deserializeFilterInstances,
   FilterInstance,
+  Matrix,
   serializeFiltersInstances,
 } from "./filters"
 import { getUrlState, setUrlState } from "./url"
@@ -63,7 +63,7 @@ export const inputState = selector<Matrix>({
 
 export const filterState = atom<FilterInstance[]>({
   key: "filters",
-  default: [createFilterInstance("head")],
+  default: [createFilterInstance("find")],
   effects_UNSTABLE: [
     ({ setSelf, onSet }) => {
       onSet((instances) => {
@@ -111,7 +111,7 @@ export const outputState = selector<Matrix>({
       }
       return ret
     } catch (err) {
-      console.log(`Applying filters failed: ${err}`)
+      console.warn(`Applying filters failed: ${err}`)
       return input
     }
   },
