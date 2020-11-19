@@ -56,7 +56,10 @@ const Main = () => {
       )}
 
       <main className="flex flex-row w-full h-full">
-        <section className="flex flex-col h-full bg-gray-400 pb-2">
+        <section
+          className="flex flex-col h-full bg-gray-400 pb-2"
+          style={{ width: 350 }}
+        >
           <header className="flex flex-row items-center p-3 bg-gray-800 text-lg">
             <HeaderLink href={url}>CSVHacker v{packageJSON.version}</HeaderLink>
             <div className="flex-grow flex flex-row justify-end items-center">
@@ -66,11 +69,13 @@ const Main = () => {
             </div>
           </header>
 
-          <InputConfig open={open} className="p-3" />
+          <InputConfig chooseFile={open} className="p-3" />
           <div className="flex-grow">
             <FilterList
               toolboxClassName={"px-3"}
-              wellClassName={"bg-gray-200 shadow-inner overflow-y-auto p-3"}
+              wellClassName={
+                "flex-grow bg-gray-200 shadow-inner overflow-y-auto p-3"
+              }
             />
           </div>
           <OutputConfig className="p-3" />

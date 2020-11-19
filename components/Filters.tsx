@@ -279,7 +279,6 @@ export const FilterList = ({
                 isDragging && "bg-green-200"
               )}
               ref={dropProvided.innerRef}
-              style={{ width: 200 }}
             >
               {filters.map((filter, i) => (
                 <Draggable draggableId={String(i)} index={i} key={i}>

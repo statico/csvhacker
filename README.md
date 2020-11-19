@@ -39,7 +39,7 @@
 1. [ ] Sticky header row
 1. [ ] Debounce input processing
 1. [ ] URLs don't paste well in Slack
-1. [ ] File or URL modal
+1. [x] File or URL modal
 1. [ ] UI/UX pass
 1. [ ] XLSX import
 1. [ ] Better grid implementation

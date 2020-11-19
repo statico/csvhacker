@@ -44,7 +44,10 @@ export const OutputConfig = ({ className }: { className?: string }) => {
 
   return (
     <div className={className}>
-      <div className="font-bold">Output ({numRows.toLocaleString()} rows):</div>
+      <div className="mb-1">
+        <span className="font-bold mr-2">Output:</span>
+        {numRows.toLocaleString()} rows
+      </div>
       <div className="mb-2">
         Delimiter:{" "}
         <RadioGroup
