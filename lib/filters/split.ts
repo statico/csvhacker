@@ -7,7 +7,7 @@ const schema = yup
     columns: columnListSchema("").required(),
     pattern: yup.string().required(),
     regex: regexSchema,
-    limit: yup.number().positive().integer(),
+    limit: yup.number().positive().integer().nullable(),
   })
   .defined()
 

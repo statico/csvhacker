@@ -62,9 +62,11 @@ export const applyFilterInstance = (
 export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
   instances = Array.from(instances).slice() // HACK: Recoil.js - Instances is not an interable?
   return instances.map((instance) => {
+    const spec = getFilterSpecification(instance.type)
     const defaults = getFilterConfigDefaults(instance.type)
     // const config = { ...instance.config }
-    const item = JSON.parse(JSON.stringify(instance.config)) // HACK: Recoil.js - config is not iterable?
+    const clone = JSON.parse(JSON.stringify(instance.config)) // Recoil freezes objects
+    const item = spec.schema.cast(clone)
     Object.keys(item).forEach((key) => {
       if (item[key] == null || item[key] === defaults[key]) delete item[key]
     })
