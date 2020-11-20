@@ -1,3 +1,4 @@
+import { custom } from "./custom"
 import { edit } from "./edit"
 import { exclude, find } from "./find-exclude"
 import { head, tail } from "./head-tail"
@@ -9,6 +10,7 @@ import { FilterInstance, FilterSpecification, Matrix } from "./types"
 import { lower, upper } from "./upper-lower"
 
 export const AllFilters: FilterSpecification[] = [
+  custom,
   edit,
   exclude,
   find,
@@ -81,6 +83,7 @@ export const deserializeFilterInstances = (items: any): FilterInstance[] => {
     const instance = createFilterInstance(item.type)
     delete item.type
     instance.config = { ...instance.config, ...item }
+    if (instance.config.enabled) instance.config.enabled = false // Don't auto-run custom filters
     return instance
   })
 }

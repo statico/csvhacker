@@ -1,5 +1,6 @@
 import classNames from "classnames"
-import { useState } from "react"
+import { debounce } from "debounce"
+import React, { Fragment, useState } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -11,6 +12,7 @@ import {
   OnDragStartResponder,
 } from "react-beautiful-dnd"
 import { FaTimes } from "react-icons/fa"
+import { GoAlert } from "react-icons/go"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   AllFilters,
@@ -54,6 +56,8 @@ const FilterView = ({ index }: { index: number }) => {
     newFilters[index] = { ...f, config: { ...f.config, ...value } }
     setFilters(newFilters)
   }
+
+  const updateMeDebounced = debounce(updateMe, 250)
 
   const deleteMe = () => {
     const f = [...filters]
@@ -104,25 +108,48 @@ const FilterView = ({ index }: { index: number }) => {
         switch (type) {
           case "number":
           case "string":
-            return (
-              <label key={key} className="flex flex-row items-center mb-1">
-                <span className="mr-1">
-                  {meta.title ? meta.title : titleCase(key)}:
-                </span>
-                <input
-                  className={classNames(
-                    "border px-2 min-w-0",
-                    type === "string" ? "flex-grow" : "max-w-xs"
-                  )}
-                  placeholder={meta.placeholder}
-                  type="text"
-                  value={instance.config[key] || ""}
-                  onChange={(e) =>
-                    updateMe({ [key]: e.target.value.trim() || null })
-                  }
-                />
-              </label>
-            )
+            if (meta.textarea) {
+              return (
+                <Fragment key={key}>
+                  <textarea
+                    className={classNames(
+                      "border px-2 min-w-0 text-sm w-full h-32",
+                      type === "string" ? "flex-grow" : "max-w-xs"
+                    )}
+                    placeholder={meta.placeholder}
+                    onChange={(e) =>
+                      updateMeDebounced({
+                        [key]: e.target.value.trim() || null,
+                      })
+                    }
+                  >
+                    {instance.config[key] || ""}
+                  </textarea>
+                </Fragment>
+              )
+            } else {
+              return (
+                <label key={key} className="flex flex-row items-center mb-1">
+                  <span className="mr-1">
+                    {meta.title ? meta.title : titleCase(key)}:
+                  </span>
+                  <input
+                    className={classNames(
+                      "border px-2 min-w-0",
+                      type === "string" ? "flex-grow" : "max-w-xs"
+                    )}
+                    placeholder={meta.placeholder}
+                    type="text"
+                    value={instance.config[key] || ""}
+                    onChange={(e) =>
+                      updateMeDebounced({
+                        [key]: e.target.value.trim() || null,
+                      })
+                    }
+                  />
+                </label>
+              )
+            }
 
           case "boolean":
             return (
@@ -158,7 +185,10 @@ const FilterView = ({ index }: { index: number }) => {
         }
       })}
       {error && (
-        <div className="text-red-600 text-sm leading-tight mt-1">{error}</div>
+        <div className="text-red-600 text-sm leading-tight mt-2">
+          <GoAlert className="inline mr-1 mx-1 align-middle" />
+          {String(error).replace(/^ValidationError:\s+/, "")}
+        </div>
       )}
     </div>
   )
