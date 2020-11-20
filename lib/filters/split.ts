@@ -13,7 +13,7 @@ const schema = yup
 
 export const split: FilterSpecification = {
   type: "split",
-  title: "Split on Pattern",
+  title: "Split",
   description: "Split one or more columns on something.",
   schema,
   transform(input, config: yup.InferType<typeof schema>) {
