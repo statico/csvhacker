@@ -47,11 +47,12 @@
 
 ### Ideas:
 
-1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
-1. [ ] Resizable work area
-1. [ ] Collapsable sidebar
-1. [ ] Make raw data viewing smarter?
-1. [ ] Show spaces in cell values
+- [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
+- [ ] Resizable work area
+- [ ] Collapsable sidebar
+- [ ] Make raw data viewing smarter?
+- [ ] Show spaces in cell values
+- [ ] Google Sheets import
 
 ## To Fix Later
 
