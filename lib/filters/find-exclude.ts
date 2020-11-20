@@ -20,7 +20,7 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
   let fn: (str: string) => boolean = () => true
   if (pattern) {
     if (regex) {
-      const re = new RegExp(pattern.trim(), caseSensitive ? "" : "i")
+      const re = new RegExp(pattern, caseSensitive ? "" : "i")
       if (invert) {
         fn = (str: string) => !re.test(str)
       } else {

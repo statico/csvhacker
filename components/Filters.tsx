@@ -117,7 +117,7 @@ const FilterView = ({ index }: { index: number }) => {
                     placeholder={meta.placeholder}
                     onChange={(e) =>
                       updateMe({
-                        [key]: e.target.value.trim() || null,
+                        [key]: e.target.value || null,
                       })
                     }
                   >
@@ -141,7 +141,7 @@ const FilterView = ({ index }: { index: number }) => {
                     value={instance.config[key] || ""}
                     onChange={(e) =>
                       updateMe({
-                        [key]: e.target.value.trim() || null,
+                        [key]: e.target.value || null,
                       })
                     }
                   />
