@@ -294,6 +294,7 @@ export const FilterList = ({
                   )}
                 </Draggable>
               ))}
+              {dropProvided.placeholder}
             </div>
           )}
         </Droppable>
