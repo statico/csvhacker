@@ -1,12 +1,10 @@
 import AutoSizer from "react-virtualized-auto-sizer"
 import { VariableSizeGrid } from "react-window"
 import { useRecoilValue } from "recoil"
-import { outputState, outputStatsState } from "../lib/state"
+import { outputState } from "../lib/state"
 
 export const Grid = () => {
-  const output = useRecoilValue(outputState)
-  const { numRows, numColumns } = useRecoilValue(outputStatsState)
-
+  const { output, numRows, numColumns } = useRecoilValue(outputState)
   if (!output) return null
 
   const Cell = ({ columnIndex, rowIndex, style }) => (

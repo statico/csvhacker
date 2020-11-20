@@ -4,13 +4,12 @@ import React, { useCallback } from "react"
 import { FaFileDownload } from "react-icons/fa"
 import { useRecoilState, useRecoilValue } from "recoil"
 import XLSX from "xlsx"
-import { outputConfigState, outputState, outputStatsState } from "../lib/state"
+import { outputConfigState, outputState } from "../lib/state"
 import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
 export const OutputConfig = ({ className }: { className?: string }) => {
-  const output = useRecoilValue(outputState)
-  const { numRows } = useRecoilValue(outputStatsState)
+  const { output, numRows } = useRecoilValue(outputState)
   const [config, setConfig] = useRecoilState(outputConfigState)
 
   const downloadCSV = useCallback(async () => {

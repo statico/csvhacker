@@ -96,39 +96,37 @@ export const outputConfigState = atom<OutputConfigState>({
   default: {},
 })
 
-export const outputState = selector<Matrix>({
-  key: "output",
-  get: ({ get }) => {
-    const input = get(inputState)
-    try {
-      if (!input) return null
-      const instances = [...get(filterState)]
-      let ret = input
-      while (instances.length) {
-        const instance = instances.shift()
-        ret = applyFilterInstance(instance, ret)
-      }
-      return ret
-    } catch (err) {
-      console.warn(`Applying filters failed: ${err}`)
-      return input
-    }
-  },
-})
-
-interface OutputStatsState {
+interface OutputState {
+  output: Matrix
+  error?: string
   numRows: number
   numColumns: number
 }
 
-export const outputStatsState = selector<OutputStatsState>({
-  key: "outputStats",
+export const outputState = selector<OutputState>({
+  key: "output",
   get: ({ get }) => {
-    const output = get(outputState)
+    const input = get(inputState)
+
+    let output = input
+    let error = null
+    try {
+      if (!input) return null
+      const instances = [...get(filterState)]
+      while (instances.length) {
+        const instance = instances.shift()
+        output = applyFilterInstance(instance, output)
+      }
+    } catch (err) {
+      output = input
+      error = String(err)
+    }
+
+    let numRows = output.length
     let numColumns = 0
     for (const row of output) {
       if (row.length > numColumns) numColumns = row.length
     }
-    return { numRows: output.length, numColumns }
+    return { output, numRows, numColumns }
   },
 })
