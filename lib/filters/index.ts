@@ -72,6 +72,7 @@ export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
     Object.keys(item).forEach((key) => {
       if (item[key] == null || item[key] === defaults[key]) delete item[key]
     })
+    if (instance.type === "custom") delete item.enabled // It won't be auto-run anyway
     item.type = instance.type
     return item
   })
