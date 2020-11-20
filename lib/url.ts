@@ -6,7 +6,8 @@ import rison from "rison-node"
 export const getUrlState = (): any => {
   if (!process.browser || !document.location.hash) return {}
   try {
-    return rison.decode_object(document.location.hash.substr(1)) || {}
+    const hash = decodeURI(document.location.hash.substr(1))
+    return rison.decode_object(hash || {})
   } catch (err) {
     console.error("Could not parse state from URL")
     return {}
@@ -22,7 +23,7 @@ const setUrlStateImmediately = (state: any): void => {
   })
 
   const url = new URL(document.location.href)
-  url.hash = Object.keys(obj).length ? rison.encode_object(obj) : ""
+  url.hash = Object.keys(obj).length ? encodeURI(rison.encode_object(obj)) : ""
   history.pushState(null, "", url.toString())
 }
 
