@@ -33,9 +33,10 @@
 1. [x] Filters: pick (columns)
 1. [x] Filters: edit
 1. [x] Filters: rmnew, trim, upper, lower
-1. [ ] Filters: split (on character), split (on fixed size)
+1. [x] Filters: split
 1. [ ] Filters: sort
 1. [ ] Filters: date format
+1. [ ] Filters: run javascript (with enable button)
 1. [ ] Sticky header row
 1. [ ] Debounce input processing
 1. [ ] URLs don't paste well in Slack

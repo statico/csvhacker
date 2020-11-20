@@ -1,6 +1,6 @@
 import * as yup from "yup"
 
-export type Matrix = any[][]
+export type Matrix = Array<string[]>
 
 export interface FilterSpecification {
   type: string
