@@ -1,5 +1,4 @@
 import classNames from "classnames"
-import { debounce } from "debounce"
 import React, { Fragment, useState } from "react"
 import {
   DragDropContext,
@@ -56,8 +55,6 @@ const FilterView = ({ index }: { index: number }) => {
     newFilters[index] = { ...f, config: { ...f.config, ...value } }
     setFilters(newFilters)
   }
-
-  const updateMeDebounced = debounce(updateMe, 250)
 
   const deleteMe = () => {
     const f = [...filters]
@@ -118,7 +115,7 @@ const FilterView = ({ index }: { index: number }) => {
                     )}
                     placeholder={meta.placeholder}
                     onChange={(e) =>
-                      updateMeDebounced({
+                      updateMe({
                         [key]: e.target.value.trim() || null,
                       })
                     }
@@ -142,7 +139,7 @@ const FilterView = ({ index }: { index: number }) => {
                     type="text"
                     value={instance.config[key] || ""}
                     onChange={(e) =>
-                      updateMeDebounced({
+                      updateMe({
                         [key]: e.target.value.trim() || null,
                       })
                     }
