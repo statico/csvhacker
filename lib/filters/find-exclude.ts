@@ -17,27 +17,29 @@ const makeTransform = (invert: boolean): FilterSpecification["transform"] => (
   const colnums = parseColumnList(columns)
 
   // This is repetitive because I hope the VM will optimize this pretty well. (shrug)
-  let fn: (str: string) => boolean
-  if (regex) {
-    const re = new RegExp(pattern.trim(), caseSensitive ? "" : "i")
-    if (invert) {
-      fn = (str: string) => !re.test(str)
-    } else {
-      fn = (str: string) => str && re.test(str)
-    }
-  } else {
-    if (caseSensitive) {
+  let fn: (str: string) => boolean = () => true
+  if (pattern) {
+    if (regex) {
+      const re = new RegExp(pattern.trim(), caseSensitive ? "" : "i")
       if (invert) {
-        fn = (str: string) => !str?.includes(pattern)
+        fn = (str: string) => !re.test(str)
       } else {
-        fn = (str: string) => str?.includes(pattern)
+        fn = (str: string) => str && re.test(str)
       }
     } else {
-      const lowerCasePattern = pattern.toLowerCase()
-      if (invert) {
-        fn = (str: string) => !str?.toLowerCase().includes(lowerCasePattern)
+      if (caseSensitive) {
+        if (invert) {
+          fn = (str: string) => !str?.includes(pattern)
+        } else {
+          fn = (str: string) => str?.includes(pattern)
+        }
       } else {
-        fn = (str: string) => str?.toLowerCase().includes(lowerCasePattern)
+        const lowerCasePattern = pattern.toLowerCase()
+        if (invert) {
+          fn = (str: string) => !str?.toLowerCase().includes(lowerCasePattern)
+        } else {
+          fn = (str: string) => str?.toLowerCase().includes(lowerCasePattern)
+        }
       }
     }
   }

@@ -12,7 +12,7 @@ import {
 } from "react-beautiful-dnd"
 import { FaTimes } from "react-icons/fa"
 import { GoAlert } from "react-icons/go"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
 import {
   AllFilters,
   checkFilterInstanceConfig,
@@ -20,7 +20,7 @@ import {
   getFilterSpecification,
 } from "../lib/filters"
 import { FilterSpecification } from "../lib/filters/types"
-import { filterState } from "../lib/state"
+import { filterState, outputState } from "../lib/state"
 import Tooltip from "./Tooltip"
 
 // https://stackoverflow.com/a/4149393/102704
@@ -44,6 +44,7 @@ const getStyle = (
 }
 
 const FilterView = ({ index }: { index: number }) => {
+  const { error: outputError, errorIndex } = useRecoilValue(outputState)
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
@@ -63,7 +64,7 @@ const FilterView = ({ index }: { index: number }) => {
   }
 
   let isValid = true
-  let error = null
+  let error = index === errorIndex ? outputError : null
   try {
     checkFilterInstanceConfig(instance)
   } catch (err) {

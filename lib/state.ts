@@ -99,6 +99,7 @@ export const outputConfigState = atom<OutputConfigState>({
 interface OutputState {
   output: Matrix
   error?: string
+  errorIndex?: number
   numRows: number
   numColumns: number
 }
@@ -107,17 +108,20 @@ export const outputState = selector<OutputState>({
   key: "output",
   get: ({ get }) => {
     const input = get(inputState)
+    if (!input) return null
+    const instances = [...get(filterState)]
 
     let output = input
     let error = null
+    let errorIndex = 0
     try {
-      if (!input) return null
-      const instances = [...get(filterState)]
       while (instances.length) {
         const instance = instances.shift()
         output = applyFilterInstance(instance, output)
+        errorIndex++
       }
     } catch (err) {
+      console.warn(err)
       output = input
       error = String(err)
     }
@@ -127,6 +131,6 @@ export const outputState = selector<OutputState>({
     for (const row of output) {
       if (row.length > numColumns) numColumns = row.length
     }
-    return { output, numRows, numColumns }
+    return { output, numRows, numColumns, error, errorIndex }
   },
 })
