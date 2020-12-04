@@ -9,11 +9,11 @@ import { Button } from "./Button"
 import { RadioGroup } from "./RadioGroup"
 
 export const OutputConfig = ({ className }: { className?: string }) => {
-  const { output, numRows } = useRecoilValue(outputState)
+  const { header, output, numRows } = useRecoilValue(outputState)
   const [config, setConfig] = useRecoilState(outputConfigState)
 
   const downloadCSV = useCallback(async () => {
-    const data = Papa.unparse(output, {
+    const data = Papa.unparse(header ? [header, ...output] : output, {
       delimiter:
         config.delimiter === "comma"
           ? ","

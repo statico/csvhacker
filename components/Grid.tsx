@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil"
 import { outputState } from "../lib/state"
 
 export const Grid = () => {
-  const { output, numRows, numColumns } = useRecoilValue(outputState)
+  const { header, output, numRows, numColumns } = useRecoilValue(outputState)
   if (!output) return null
 
   const Cell = ({ columnIndex, rowIndex, style }) => (
@@ -14,10 +14,15 @@ export const Grid = () => {
       className={classNames(
         "border-t border-l p-1 text-sm truncate",
         rowIndex === numRows - 1 && "border-b",
-        columnIndex === numColumns - 1 && "border-r"
+        columnIndex === numColumns - 1 && "border-r",
+        header && rowIndex === 0 && "fixed top-0 left-0 font-bold"
       )}
     >
-      {output?.[rowIndex]?.[columnIndex]}
+      {header
+        ? rowIndex === 0
+          ? header[columnIndex]
+          : output[rowIndex - 1][columnIndex]
+        : output[rowIndex][columnIndex]}
     </div>
   )
 
@@ -27,7 +32,7 @@ export const Grid = () => {
         <VariableSizeGrid
           width={width}
           height={height}
-          rowCount={numRows}
+          rowCount={header ? numRows + 1 : numRows}
           columnCount={numColumns}
           estimatedRowHeight={30}
           estimatedColumnWidth={130}

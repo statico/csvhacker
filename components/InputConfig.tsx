@@ -14,7 +14,17 @@ export const InputConfig = ({
 }) => {
   const [config, setConfig] = useRecoilState(inputConfigState)
 
-  const onChange = useCallback(
+  const onPreserveHeaderChange = useCallback(
+    (event: any) => {
+      setConfig({
+        ...config,
+        preserveHeader: event.target.checked,
+      })
+    },
+    [config]
+  )
+
+  const onDelimiterChange = useCallback(
     (value: any) => {
       setConfig({
         ...config,
@@ -49,6 +59,14 @@ export const InputConfig = ({
         </Button>
       </div>
       <div>
+        Preserve Header:{" "}
+        <input
+          type="checkbox"
+          checked={config.preserveHeader || false}
+          onChange={onPreserveHeaderChange}
+        />
+      </div>
+      <div>
         Delimiter:{" "}
         <RadioGroup
           name="inputDelimiter"
@@ -58,7 +76,7 @@ export const InputConfig = ({
             { label: "Comma", value: "comma" },
             { label: "Tab", value: "tab" },
           ]}
-          onChange={onChange}
+          onChange={onDelimiterChange}
         />
       </div>
     </div>

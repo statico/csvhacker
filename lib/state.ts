@@ -12,22 +12,37 @@ import { getUrlState, setUrlState } from "./url"
 interface InputConfigState {
   url?: string
   file?: File
-  delimiter?: "comma" | "tab"
+  preserveHeader?: boolean // Default is true
+  delimiter?: "comma" | "tab" // Deafult is auto
 }
 
 export const inputConfigState = atom<InputConfigState>({
   key: "inputConfig",
-  default: {},
+  default: {
+    preserveHeader: true,
+  },
   effects_UNSTABLE: [
+    // Note: Lots of tricks here to make sure we don't unnecessarily save
+    // defaults to the URL.
     ({ setSelf, onSet }) => {
       // @ts-ignore
-      onSet(({ url }) => {
-        setUrlState({ ...getUrlState(), url })
+      onSet(({ url, preserveHeader }) => {
+        const newState = { ...getUrlState, url, preserveHeader }
+        for (const key of Object.keys(newState)) {
+          if (Array.isArray(newState[key]) && newState[key].length == 0) {
+            delete newState[key]
+          } else if (key === "preserveHeader" && newState[key] !== false) {
+            delete newState[key]
+          }
+        }
+        setUrlState(newState)
       })
 
       const read = () => {
-        const { url } = getUrlState()
-        if (url) setSelf({ url })
+        const { url, preserveHeader, delimiter } = getUrlState()
+        const newState = { url, preserveHeader, delimiter }
+        if (newState.preserveHeader !== false) newState.preserveHeader = true
+        setSelf(newState)
       }
       setTimeout(read, 0) // HACK: Why doesn't read() just work?
 
@@ -97,6 +112,7 @@ export const outputConfigState = atom<OutputConfigState>({
 })
 
 interface OutputState {
+  header?: string[]
   output: Matrix
   error?: string
   errorIndex?: number
@@ -107,11 +123,20 @@ interface OutputState {
 export const outputState = selector<OutputState>({
   key: "output",
   get: ({ get }) => {
+    const { preserveHeader } = get(inputConfigState)
     const input = get(inputState)
     if (!input) return null
     const instances = [...get(filterState)]
 
-    let output = input
+    let header, output
+    if (preserveHeader) {
+      header = input[0]
+      output = input.slice(1)
+    } else {
+      header = null
+      output = input
+    }
+
     let error = null
     let errorIndex = 0
     try {
@@ -122,8 +147,14 @@ export const outputState = selector<OutputState>({
       }
     } catch (err) {
       console.warn(err)
-      output = input
       error = String(err)
+      if (preserveHeader) {
+        header = input[0]
+        output = input.slice(1)
+      } else {
+        header = null
+        output = input
+      }
     }
 
     let numRows = output.length
@@ -131,6 +162,6 @@ export const outputState = selector<OutputState>({
     for (const row of output) {
       if (row.length > numColumns) numColumns = row.length
     }
-    return { output, numRows, numColumns, error, errorIndex }
+    return { header, output, numRows, numColumns, error, errorIndex }
   },
 })
