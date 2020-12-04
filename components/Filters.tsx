@@ -92,11 +92,13 @@ const FilterView = ({ index }: { index: number }) => {
     >
       <div className="flex flex-row items-center mb-2">
         <div className="font-bold truncate">{spec.title}</div>
-        <div
-          className="flex flex-grow items-center justify-end text-gray-400 hover:text-gray-600 cursor-pointer"
-          onClick={deleteMe}
-        >
-          <FaTimes />
+        <div className="flex flex-grow items-center justify-end ">
+          <span
+            className="text-gray-400 hover:text-gray-600 cursor-pointer"
+            onClick={deleteMe}
+          >
+            <FaTimes />
+          </span>
         </div>
       </div>
       {Object.keys(fields).map((key) => {
@@ -321,7 +323,7 @@ export const FilterList = ({
                       {...dragProvided.draggableProps}
                       {...dragProvided.dragHandleProps}
                       className={`
-                        bg-white hover:bg-gray-100 
+                        bg-white
                         rounded-sm
                         shadow hover:shadow-md
                         border border-transparent hover:border-gray-300
