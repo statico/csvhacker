@@ -1,5 +1,6 @@
 import classNames from "classnames"
-import React, { Fragment, useCallback, useState } from "react"
+import { debounce } from "debounce"
+import React, { Fragment, useCallback, useMemo, useState } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -19,7 +20,7 @@ import {
   createFilterInstance,
   getFilterSpecification,
 } from "../lib/filters"
-import { FilterSpecification } from "../lib/filters/types"
+import { FilterInstance, FilterSpecification } from "../lib/filters/types"
 import { filterState, outputState } from "../lib/state"
 import Tooltip from "./Tooltip"
 
@@ -48,8 +49,6 @@ const FilterView = ({ index }: { index: number }) => {
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
-  const instance = filters[index]
-
   const updateMe = useCallback(
     (value: any) => {
       const newFilters = [...filters]
@@ -58,6 +57,23 @@ const FilterView = ({ index }: { index: number }) => {
       setFilters(newFilters)
     },
     [filters, index]
+  )
+  const updateMeDebounced = useMemo(() => debounce(updateMe, 300), [updateMe])
+
+  const instance = filters[index]
+
+  const [bufferedInstance, setBufferedInstance] = useState<FilterInstance>(
+    instance
+  )
+  const updateBuffer = useCallback(
+    (value: any) => {
+      setBufferedInstance({
+        ...instance,
+        config: { ...instance.config, ...value },
+      })
+      updateMeDebounced(value)
+    },
+    [instance, index]
   )
 
   const deleteMe = useCallback(() => {
@@ -121,13 +137,12 @@ const FilterView = ({ index }: { index: number }) => {
                     )}
                     placeholder={meta.placeholder}
                     onChange={(e) =>
-                      updateMe({
+                      updateBuffer({
                         [key]: e.target.value || null,
                       })
                     }
-                  >
-                    {instance.config[key] || ""}
-                  </textarea>
+                    value={bufferedInstance.config[key] || ""}
+                  ></textarea>
                 </Fragment>
               )
             } else {
