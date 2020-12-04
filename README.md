@@ -44,7 +44,7 @@
 1. [x] File or URL modal
 1. [ ] UI/UX pass
 1. [ ] XLSX import
-1. [ ] Better grid implementation
+1. [x] Better grid implementation
 
 ### Ideas:
 
