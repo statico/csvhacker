@@ -12,7 +12,7 @@ import {
 } from "react-beautiful-dnd"
 import { FaTimes } from "react-icons/fa"
 import { GoAlert } from "react-icons/go"
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import {
   AllFilters,
   checkFilterInstanceConfig,

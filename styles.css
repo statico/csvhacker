@@ -15,7 +15,10 @@ html {
 }
 .BaseTable__row-cell,
 .BaseTable__header-cell {
-  @apply text-sm px-2 py-1 truncate !important;
+  @apply text-sm px-2 py-1 !important;
+}
+.BaseTable__row-cell-text {
+  @apply truncate !important;
 }
 .BaseTable__header-row,
 .BaseTable__row,
