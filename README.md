@@ -38,10 +38,9 @@
 1. [x] Filters: reduce (and add state variable to custom)
 1. [ ] Filters: sort
 1. [ ] Filters: date format
-1. [ ] Filters: run javascript (with enable button)
-1. [ ] Sticky header row
-1. [ ] Debounce input processing
-1. [ ] URLs don't paste well in Slack
+1. [x] Sticky header row
+1. [x] Debounce input processing
+1. [x] URLs don't paste well in Slack
 1. [x] File or URL modal
 1. [ ] UI/UX pass
 1. [ ] XLSX import
