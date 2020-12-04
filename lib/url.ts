@@ -23,7 +23,12 @@ const setUrlStateImmediately = (state: any): void => {
   })
 
   const url = new URL(document.location.href)
-  url.hash = Object.keys(obj).length ? encodeURI(rison.encode_object(obj)) : ""
+  // Also encode any trailing punctuation since that makes pasting in Slack/Discord troublesome.
+  url.hash = Object.keys(obj).length
+    ? encodeURI(rison.encode_object(obj)).replace(/[!'()*]$/g, function (c) {
+        return "%" + c.charCodeAt(0).toString(16)
+      })
+    : ""
   history.pushState(null, "", url.toString())
 }
 
