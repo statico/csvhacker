@@ -35,7 +35,7 @@
 1. [x] Filters: rmnew, trim, upper, lower
 1. [x] Filters: split
 1. [x] Preserve header option
-1. [ ] Filters: reduce (and add state variable to custom)
+1. [x] Filters: reduce (and add state variable to custom)
 1. [ ] Filters: sort
 1. [ ] Filters: date format
 1. [ ] Filters: run javascript (with enable button)

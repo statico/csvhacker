@@ -2,7 +2,20 @@ import * as yup from "yup"
 import { FilterSpecification } from "./types"
 
 const makeFunction = (body: string) =>
-  new Function(`var row = arguments[0];${body}`)
+  new Function(`
+    let row = arguments[0];
+    let index = arguments[1];
+    let output = arguments[2];
+    let state = arguments[3];
+    ${body}
+  `)
+
+const placeholder = `
+state.count = state.count || 0
+state.count += index
+row[0] = JSON.stringify(state)
+output.push(row)
+`.trim()
 
 const schema = yup
   .object({
@@ -13,11 +26,8 @@ const schema = yup
     code: yup
       .string()
       .nullable()
-      .meta({
-        textarea: true,
-        placeholder:
-          "// return row.map(x => x.toUpperCase())\n// return false to skip the row\n// return true to keep the input row",
-      })
+      .default(placeholder)
+      .meta({ textarea: true, placeholder })
       .test("is-valid-function", "Must be valid JavaScript", (value) => {
         try {
           makeFunction(value)
@@ -30,26 +40,23 @@ const schema = yup
   })
   .defined()
 
-export const custom: FilterSpecification = {
-  type: "custom",
-  title: "Custom",
-  description: "Write custom JavaScript code to filter a row",
+export const mapreduce: FilterSpecification = {
+  type: "mapreduce",
+  title: "MapReduce",
+  description: "Write JavaScript code to filter or aggregate rows",
   schema,
   transform(input, config: yup.InferType<typeof schema>) {
     const { code, enabled } = config
     if (!enabled) return input
+
+    const state: any = {}
+    const output: any[] = []
     const fn = makeFunction(code)
-    const output = []
+
     for (let i = 0; i < input.length; i++) {
-      const result = fn(input[i])
-      if (result === false) {
-        continue
-      } else if (Array.isArray(result)) {
-        output.push(result)
-      } else {
-        output.push(input[i])
-      }
+      fn(input[i].slice(0), i, output, state)
     }
+
     return output
   },
 }

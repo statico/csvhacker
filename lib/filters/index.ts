@@ -1,4 +1,4 @@
-import { custom } from "./custom"
+import { mapreduce } from "./mapreduce"
 import { edit } from "./edit"
 import { exclude, find } from "./find-exclude"
 import { head, tail } from "./head-tail"
@@ -10,7 +10,7 @@ import { FilterInstance, FilterSpecification, Matrix } from "./types"
 import { lower, upper } from "./upper-lower"
 
 export const AllFilters: FilterSpecification[] = [
-  custom,
+  mapreduce,
   edit,
   exclude,
   find,
@@ -72,7 +72,7 @@ export const serializeFiltersInstances = (instances: FilterInstance[]): any => {
     Object.keys(item).forEach((key) => {
       if (item[key] == null || item[key] === defaults[key]) delete item[key]
     })
-    if (instance.type === "custom") delete item.enabled // It won't be auto-run anyway
+    if (instance.type === "mapreduce") delete item.enabled // It won't be auto-run anyway
     item.type = instance.type
     return item
   })

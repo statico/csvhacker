@@ -146,7 +146,6 @@ export const outputState = selector<OutputState>({
         errorIndex++
       }
     } catch (err) {
-      console.warn(err)
       error = String(err)
       if (preserveHeader) {
         header = input[0]
