@@ -3,7 +3,7 @@ import { FilterSpecification } from "./types"
 
 const schema = yup
   .object({
-    rows: yup.number().positive().integer().nullable().meta({
+    rows: yup.number().positive().integer().nullable().default(20).meta({
       placeholder: "All",
       helpText:
         "Enter the number of rows to retain, or leave blank for all rows.",
