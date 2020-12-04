@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import React, { Fragment, useState } from "react"
+import React, { Fragment, useCallback, useState } from "react"
 import {
   DragDropContext,
   Draggable,
@@ -50,18 +50,21 @@ const FilterView = ({ index }: { index: number }) => {
 
   const instance = filters[index]
 
-  const updateMe = (value: any) => {
-    const newFilters = [...filters]
-    const f = filters[index]
-    newFilters[index] = { ...f, config: { ...f.config, ...value } }
-    setFilters(newFilters)
-  }
+  const updateMe = useCallback(
+    (value: any) => {
+      const newFilters = [...filters]
+      const f = filters[index]
+      newFilters[index] = { ...f, config: { ...f.config, ...value } }
+      setFilters(newFilters)
+    },
+    [filters, index]
+  )
 
-  const deleteMe = () => {
+  const deleteMe = useCallback(() => {
     const f = [...filters]
     f.splice(index, 1)
     setFilters(f)
-  }
+  }, [filters, index])
 
   let isValid = true
   let error = index === errorIndex ? outputError : null
