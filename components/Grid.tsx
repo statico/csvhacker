@@ -2,6 +2,15 @@ import React, { useMemo } from "react"
 import BaseTable, { AutoResizer, ColumnShape } from "react-base-table"
 import { useRecoilValue } from "recoil"
 import { outputState } from "../lib/state"
+import PropTypes from "prop-types"
+
+// Monkey patch react-base-table to accept arrays as data, not just objects.
+import TableRow from "react-base-table/es/TableRow"
+TableRow.propTypes.rowData = PropTypes.array
+import TableCell from "react-base-table/es/TableCell"
+TableCell.propTypes.rowData = PropTypes.array
+import GridTable from "react-base-table/es/GridTable"
+GridTable.prototype._itemKey = ({ rowIndex }) => String(rowIndex)
 
 export const Grid = () => {
   const { header, output, numColumns } = useRecoilValue(outputState)
