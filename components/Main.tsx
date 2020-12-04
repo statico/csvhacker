@@ -81,7 +81,7 @@ const Main = () => {
           <OutputConfig className="p-3" />
         </section>
 
-        <section className="p-1 w-full flex flex-col">
+        <section className="w-full flex flex-col">
           <Grid />
         </section>
       </main>

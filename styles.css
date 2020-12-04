@@ -9,10 +9,22 @@ html {
 @tailwind components;
 /* Stop purging. */
 
-/* Write your own custom component styles here */
-/* .btn-blue {
-  @apply bg-blue-500 text-white font-bold py-2 px-4 rounded;
-} */
+@import "react-base-table/styles.css";
+.BaseTable__header-row {
+  @apply bg-gray-300 !important;
+}
+.BaseTable__row-cell,
+.BaseTable__header-cell {
+  @apply text-sm px-2 py-1 truncate !important;
+}
+.BaseTable__header-row,
+.BaseTable__row,
+.BaseTable__row-expanded {
+  @apply border-gray-200 !important;
+}
+.BaseTable__row-cell {
+  @apply border-r !important;
+}
 
 /* Start purging... */
 @tailwind utilities;
