@@ -54,19 +54,29 @@ export const inputConfigState = atom<InputConfigState>({
   ],
 })
 
-export const inputState = selector<Matrix>({
+interface InputState {
+  input: Matrix
+  error?: string
+}
+
+export const inputState = selector<InputState>({
   key: "input",
   get: ({ get }) => {
     const { url, file, delimiter } = get(inputConfigState)
-    if (!(url || file)) return []
+    if (!(url || file)) return { input: [] }
     return new Promise((resolve, reject) => {
       Papa.parse(url || file, {
         delimiter:
           delimiter === "comma" ? "," : delimiter === "tab" ? "\t" : undefined,
         download: true,
-        error: reject,
+        error: (err) => {
+          resolve({ input: [], error: String(err) })
+        },
         worker: true,
-        complete: ({ data }: any) => {
+        complete: (results: any) => {
+          if (!results) return
+          const { data } = results
+
           // papaparse seems to put a single-cell row of `[""]` at the end of the results.
           if (
             data.length > 1 &&
@@ -75,7 +85,7 @@ export const inputState = selector<Matrix>({
           ) {
             data = data.slice(0, data.length - 1)
           }
-          resolve(data)
+          resolve({ input: data })
         },
       })
     })
@@ -131,8 +141,13 @@ export const outputState = selector<OutputState>({
   key: "output",
   get: ({ get }) => {
     const { preserveHeader } = get(inputConfigState)
-    const input = get(inputState)
+
+    const { input, error: inputError } = get(inputState)
     if (!input) return null
+    if (inputError) {
+      return { output: [], numRows: 0, numColumns: 0, error: inputError }
+    }
+
     const instances = [...get(filterState)]
 
     let header, output
