@@ -2,7 +2,13 @@ import * as yup from "yup"
 import { FilterSpecification } from "./types"
 
 const schema = yup.object({
-  column: yup.number().integer().nullable(),
+  column: yup
+    .number()
+    .min(0)
+    .integer()
+    .nullable()
+    .transform((n) => (isNaN(n) ? null : n)) // Fix yup casting weirdness
+    .meta({ isColumnNumber: true }),
   ascending: yup.boolean().default(true),
   numeric: yup.boolean().default(false),
 })

@@ -45,7 +45,13 @@ const getStyle = (
 }
 
 const FilterView = ({ index }: { index: number }) => {
-  const { error: outputError, errorIndex } = useRecoilValue(outputState)
+  const { error: outputError, errorIndex, header, numColumns } = useRecoilValue(
+    outputState
+  )
+  const columnNames = header
+    ? header
+    : new Array(numColumns).fill(0).map((_, i) => `Column ${i + 1}`)
+
   const filters = useRecoilValue(filterState)
   const setFilters = useSetRecoilState(filterState)
 
@@ -128,6 +134,7 @@ const FilterView = ({ index }: { index: number }) => {
           case "number":
           case "string":
             if (meta.textarea) {
+              // Textarea
               return (
                 <Fragment key={key}>
                   <textarea
@@ -136,16 +143,36 @@ const FilterView = ({ index }: { index: number }) => {
                       type === "string" ? "flex-grow" : "max-w-xs"
                     )}
                     placeholder={meta.placeholder}
-                    onChange={(e) =>
-                      updateBuffer({
-                        [key]: e.target.value || null,
-                      })
-                    }
                     value={bufferedInstance.config[key] || ""}
+                    onChange={(e) => {
+                      updateBuffer({ [key]: e.target.value || null })
+                    }}
                   ></textarea>
                 </Fragment>
               )
+            } else if (meta.isColumnNumber) {
+              // Single column picker
+              return (
+                <label key={key} className="flex flex-row items-center mb-1">
+                  Column:
+                  <select
+                    className="ml-2 border"
+                    value={instance.config[key] || ""}
+                    onChange={(e) => {
+                      updateMe({ [key]: e.target.value || null })
+                    }}
+                  >
+                    <option value=""></option>
+                    {columnNames.map((name, i) => (
+                      <option key={i} value={i}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )
             } else {
+              // Text field
               return (
                 <label key={key} className="flex flex-row items-center mb-1">
                   <span className="mr-1">
@@ -156,20 +183,19 @@ const FilterView = ({ index }: { index: number }) => {
                       "border px-2 min-w-0",
                       type === "string" ? "flex-grow" : "max-w-xs"
                     )}
-                    placeholder={meta.placeholder}
                     type="text"
                     value={instance.config[key] || ""}
-                    onChange={(e) =>
-                      updateMe({
-                        [key]: e.target.value || null,
-                      })
-                    }
+                    placeholder={meta.placeholder}
+                    onChange={(e) => {
+                      updateMe({ [key]: e.target.value || null })
+                    }}
                   />
                 </label>
               )
             }
 
           case "boolean":
+            // Checkbox
             return (
               <label key={key} className="flex flex-row items-center mb-1">
                 <span className="mr-1">

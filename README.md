@@ -36,7 +36,7 @@
 1. [x] Filters: split
 1. [x] Preserve header option
 1. [x] Filters: reduce (and add state variable to custom)
-1. [ ] Filters: sort
+1. [x] Filters: sort
 1. [ ] Filters: date format
 1. [x] Sticky header row
 1. [x] Debounce input processing
