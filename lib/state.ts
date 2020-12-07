@@ -66,9 +66,16 @@ export const inputState = selector<Matrix>({
         download: true,
         error: reject,
         worker: true,
-        complete: (results) => {
-          // @ts-ignore
-          resolve(results.data)
+        complete: ({ data }: any) => {
+          // papaparse seems to put a single-cell row of `[""]` at the end of the results.
+          if (
+            data.length > 1 &&
+            data[data.length - 1].length === 1 &&
+            data[data.length - 1][0] === ""
+          ) {
+            data = data.slice(0, data.length - 1)
+          }
+          resolve(data)
         },
       })
     })
