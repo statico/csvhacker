@@ -42,18 +42,17 @@
 1. [x] Debounce input processing
 1. [x] URLs don't paste well in Slack
 1. [x] File or URL modal
+1. [ ] Tooltips
 1. [ ] UI/UX pass
 1. [ ] XLSX import
 1. [x] Better grid implementation
-
-### Ideas:
-
-- [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
-- [ ] Resizable work area
-- [ ] Collapsable sidebar
-- [ ] Make raw data viewing smarter?
-- [ ] Show spaces in cell values
-- [ ] Google Sheets import
+1. [ ] Resizable sidebar (and keep state)
+1. [ ] Keep column size state in sidebar
+1. [ ] Hijack Cmd-F to insert a find filter instead of searching the doc
+1. [ ] Make raw data viewing smarter? (monspace mode? show spaces?)
+1. [ ] Final pass on README & docs
+1. [ ] Upgrade React & everything to get rid of experimental
+1. [ ] Google Sheets import/export
 
 ## To Fix Later
 

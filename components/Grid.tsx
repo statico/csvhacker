@@ -36,7 +36,7 @@ export const Grid = () => {
           width={width}
           height={height}
           headerHeight={30}
-          estimatedRowHeight={30}
+          rowHeight={30}
         />
       )}
     </AutoResizer>

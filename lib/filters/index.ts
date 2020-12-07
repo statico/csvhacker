@@ -8,6 +8,7 @@ import { split } from "./split"
 import { trim } from "./trim"
 import { FilterInstance, FilterSpecification, Matrix } from "./types"
 import { lower, upper } from "./upper-lower"
+import { sort } from "./sort"
 
 export const AllFilters: FilterSpecification[] = [
   mapreduce,
@@ -18,6 +19,7 @@ export const AllFilters: FilterSpecification[] = [
   lower,
   pick,
   rmnew,
+  sort,
   split,
   tail,
   trim,
