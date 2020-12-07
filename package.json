@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "dayjs": "^1.9.7",
     "debounce": "^1.2.0",
     "js-file-download": "^0.4.12",
     "next": "^10.0.1",
@@ -36,7 +37,6 @@
     "yup": "^0.29.3"
   },
   "devDependencies": {
-    "@types/change-case": "^2.3.1",
     "@types/classnames": "^2.2.11",
     "@types/debounce": "^1.2.0",
     "@types/next": "^9.0.0",
@@ -48,9 +48,6 @@
     "@types/react-dom": "^16.9.9",
     "@types/react-dropzone": "^5.1.0",
     "@types/react-icons": "^3.0.0",
-    "@types/react-table": "^7.0.25",
-    "@types/react-virtualized-auto-sizer": "^1.0.0",
-    "@types/react-window": "^1.8.2",
     "@types/recoil": "^0.0.1",
     "@types/xlsx": "^0.0.36",
     "@types/yup": "^0.29.9",

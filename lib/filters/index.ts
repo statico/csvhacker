@@ -1,17 +1,19 @@
-import { mapreduce } from "./mapreduce"
+import { datetime } from "./datetime"
 import { edit } from "./edit"
 import { exclude, find } from "./find-exclude"
 import { head, tail } from "./head-tail"
+import { mapreduce } from "./mapreduce"
 import { pick } from "./pick"
 import { rmnew } from "./rmnew"
+import { sort } from "./sort"
 import { split } from "./split"
 import { trim } from "./trim"
 import { FilterInstance, FilterSpecification, Matrix } from "./types"
 import { lower, upper } from "./upper-lower"
-import { sort } from "./sort"
 
 export const AllFilters: FilterSpecification[] = [
   mapreduce,
+  datetime,
   edit,
   exclude,
   find,

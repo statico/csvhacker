@@ -190,6 +190,17 @@ const FilterView = ({ index }: { index: number }) => {
                       updateMe({ [key]: e.target.value || null })
                     }}
                   />
+                  {meta.helpLink && (
+                    <span className="ml-2 flex-grow text-right">
+                      <a
+                        href={meta.helpLink}
+                        target="_blank"
+                        className="text-xs underline"
+                      >
+                        Help?
+                      </a>
+                    </span>
+                  )}
                 </label>
               )
             }
