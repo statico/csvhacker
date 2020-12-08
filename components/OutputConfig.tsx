@@ -45,7 +45,7 @@ export const OutputConfig = ({ className }: { className?: string }) => {
     <div className={className}>
       <div className="mb-1">
         <span className="font-bold mr-2">Output:</span>
-        {numRows.toLocaleString()} rows
+        {numRows != null ? `${numRows.toLocaleString()} rows` : "None"}
       </div>
       <div className="mb-2">
         Delimiter:{" "}

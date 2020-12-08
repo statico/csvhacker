@@ -55,7 +55,7 @@ export const inputConfigState = atom<InputConfigState>({
 })
 
 interface InputState {
-  input: Matrix
+  input?: Matrix
   error?: string
 }
 
@@ -63,7 +63,8 @@ export const inputState = selector<InputState>({
   key: "input",
   get: ({ get }) => {
     const { url, file, delimiter } = get(inputConfigState)
-    if (!(url || file)) return { input: [] }
+    if (!(url || file)) return {}
+
     return new Promise((resolve, reject) => {
       Papa.parse(url || file, {
         delimiter:
@@ -83,9 +84,10 @@ export const inputState = selector<InputState>({
             data[data.length - 1].length === 1 &&
             data[data.length - 1][0] === ""
           ) {
-            data = data.slice(0, data.length - 1)
+            resolve({ input: data.slice(0, data.length - 1) })
+          } else {
+            resolve({ input: data })
           }
-          resolve({ input: data })
         },
       })
     })
@@ -130,11 +132,11 @@ export const outputConfigState = atom<OutputConfigState>({
 
 interface OutputState {
   header?: string[]
-  output: Matrix
+  output?: Matrix
   error?: string
   errorIndex?: number
-  numRows: number
-  numColumns: number
+  numRows?: number
+  numColumns?: number
 }
 
 export const outputState = selector<OutputState>({
@@ -143,9 +145,9 @@ export const outputState = selector<OutputState>({
     const { preserveHeader } = get(inputConfigState)
 
     const { input, error: inputError } = get(inputState)
-    if (!input) return null
+    if (!input) return {}
     if (inputError) {
-      return { output: [], numRows: 0, numColumns: 0, error: inputError }
+      return { error: inputError }
     }
 
     const instances = [...get(filterState)]

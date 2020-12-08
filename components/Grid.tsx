@@ -13,7 +13,7 @@ import GridTable from "react-base-table/es/GridTable"
 GridTable.prototype._itemKey = ({ rowIndex }) => String(rowIndex)
 
 export const Grid = () => {
-  const { header, output, numColumns, error } = useRecoilValue(outputState)
+  const { header, output, numColumns } = useRecoilValue(outputState)
   if (!output) return null
 
   const columns = useMemo<ColumnShape<any>[]>(() => {
@@ -26,32 +26,19 @@ export const Grid = () => {
     }))
   }, [header, output])
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="max-w-xl p-4 m-4 border border-red-600 text-red-600 text-center">
-          {error}
-          <br />
-          <br />
-          See console for further details.
-        </div>
-      </div>
-    )
-  } else {
-    return (
-      <AutoResizer>
-        {({ height, width }) => (
-          <BaseTable
-            fixed
-            data={output}
-            columns={columns}
-            width={width}
-            height={height}
-            headerHeight={30}
-            rowHeight={30}
-          />
-        )}
-      </AutoResizer>
-    )
-  }
+  return (
+    <AutoResizer>
+      {({ height, width }) => (
+        <BaseTable
+          fixed
+          data={output}
+          columns={columns}
+          width={width}
+          height={height}
+          headerHeight={30}
+          rowHeight={30}
+        />
+      )}
+    </AutoResizer>
+  )
 }

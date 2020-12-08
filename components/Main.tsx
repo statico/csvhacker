@@ -1,8 +1,8 @@
 import { ReactNode, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import { FaCloudUploadAlt, FaGithub, FaInfoCircle } from "react-icons/fa"
-import { useSetRecoilState } from "recoil"
-import { inputConfigState } from "../lib/state"
+import { FaCloudUploadAlt, FaGithub } from "react-icons/fa"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+import { inputConfigState, inputState, outputState } from "../lib/state"
 import packageJSON from "../package.json"
 import { FilterList } from "./Filters"
 import { Grid } from "./Grid"
@@ -27,6 +27,28 @@ const HeaderLink = ({
     {children}
   </a>
 )
+
+const Results = () => {
+  const { input } = useRecoilValue(inputState)
+  const { error } = useRecoilValue(outputState)
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="max-w-xl p-4 m-4 border border-red-600 text-red-600 text-center">
+          {error}
+          <br />
+          <br />
+          See console for further details.
+        </div>
+      </div>
+    )
+  } else if (!input) {
+    return null // No helper text for now.
+  } else {
+    return <Grid />
+  }
+}
 
 const Main = () => {
   const setInputConfig = useSetRecoilState(inputConfigState)
@@ -82,7 +104,7 @@ const Main = () => {
         </section>
 
         <section className="w-full flex flex-col">
-          <Grid />
+          <Results />
         </section>
       </main>
     </div>
