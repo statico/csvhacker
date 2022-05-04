@@ -1,3 +1,9 @@
+import { Container, Heading } from "@chakra-ui/react"
+
 export default function Page() {
-  return <h1>hello</h1>
+  return (
+    <Container>
+      <Heading as="h1">Hello</Heading>
+    </Container>
+  )
 }
