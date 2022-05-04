@@ -15,7 +15,7 @@ import useModals, { ModalProvider } from "../hooks/useModals"
 const DEFAULT_QUERY = "select * from data"
 
 export const App = () => {
-  const bgColor = useColorModeValue("white", "black.100")
+  const isDark = useColorModeValue(false, true)
   const { alert } = useModals()
 
   const [sqlite, setSQLite] = useState<SqlJsStatic>()
@@ -140,7 +140,7 @@ export const App = () => {
       display="flex"
       flexDirection="column"
       fontFamily="Menlo, monospace"
-      bg={bgColor}
+      bg={isDark ? "black.100" : "white"}
     >
       <input {...getInputProps()} />
 
@@ -150,17 +150,21 @@ export const App = () => {
             height="75px"
             defaultValue={query}
             defaultLanguage="sql"
-            theme="vs-dark"
+            theme={isDark ? "vs-dark" : "light"}
             onChange={(value) => setQuery(value || "")}
             options={{
               fontSize: 16,
               fontFamily:
                 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-              lineNumbers: "off",
+              lineDecorationsWidth: 0, // undocumented
+              lineNumbersMinChars: 0, // undocumented
+              glyphMargin: false,
+              folding: false,
+              lineNumbers: false,
               renderLineHighlight: false,
               scrollbar: {
                 vertical: "hidden",
-                verticalScrollbarSize: 7,
+                verticalScrollbarSize: 0,
               },
               minimap: {
                 enabled: false,
@@ -171,11 +175,21 @@ export const App = () => {
       </Box>
 
       {error ? (
-        <Box bg="red" color="white" p={1} fontSize="sm">
+        <Box
+          bg={isDark ? "red.700" : "red.100"}
+          color={isDark ? "white" : "black"}
+          p={1}
+          fontSize="sm"
+        >
           {error}
         </Box>
       ) : (
-        <Box bg="blue" color="white" p={1} fontSize="sm">
+        <Box
+          bg={isDark ? "blue.700" : "blue.100"}
+          color={isDark ? "white" : "black"}
+          p={1}
+          fontSize="sm"
+        >
           {pluralize("rows", results?.values.length || 0, true)}
         </Box>
       )}
