@@ -10,6 +10,7 @@ import slugify from "slugify"
 import initSqlJs, { Database, QueryExecResult, SqlJsStatic } from "sql.js"
 import pluralize from "pluralize"
 import fetch from "unfetch"
+import Editor from "@monaco-editor/react"
 
 const DEFAULT_QUERY = "select * from data"
 
@@ -21,7 +22,7 @@ export const App = () => {
 
   const [sqlite, setSQLite] = useState<SqlJsStatic>()
   const [db, setDB] = useState<Database>()
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState(DEFAULT_QUERY)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -139,23 +140,29 @@ export const App = () => {
       {...getRootProps()}
       h="100vh"
       w="100vw"
-      bg={isDragActive ? "green.100" : "gray.50"}
       display="flex"
       flexDirection="column"
+      fontFamily="Menlo, monospace"
+      bg={"black"}
     >
-      <Input {...getInputProps()} size="md" />
-      <style jsx global>{`
-        body {
-          font-family: Menlo, monospace;
-        }
-      `}</style>
+      <input {...getInputProps()} />
 
       <Box as="header">
-        <HStack>
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={DEFAULT_QUERY}
+        <HStack p={1}>
+          <Editor
+            height="50px"
+            defaultValue={query}
+            defaultLanguage="sql"
+            theme="vs-dark"
+            onChange={(value) => setQuery(value || "")}
+            options={{
+              fontSize: 16,
+              minimap: {
+                enabled: false,
+              },
+              lineNumbers: "off",
+              renderLineHighlight: false,
+            }}
           />
         </HStack>
       </Box>
