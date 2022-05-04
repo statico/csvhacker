@@ -1,24 +1,22 @@
-import DataGrid, { Column } from "react-data-grid"
-import { Box, Center, HStack, Input, Text, useToast } from "@chakra-ui/react"
+import { Box, HStack, useColorModeValue, useToast } from "@chakra-ui/react"
+import Editor from "@monaco-editor/react"
 import flatten from "just-flatten-it"
 import split from "just-split"
-import { NextSeo } from "next-seo"
 import { parse } from "papaparse"
+import pluralize from "pluralize"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import DataGrid, { Column } from "react-data-grid"
 import { useDropzone } from "react-dropzone"
 import slugify from "slugify"
 import initSqlJs, { Database, QueryExecResult, SqlJsStatic } from "sql.js"
-import pluralize from "pluralize"
 import fetch from "unfetch"
-import Editor from "@monaco-editor/react"
+import useModals, { ModalProvider } from "../hooks/useModals"
 
 const DEFAULT_QUERY = "select * from data"
 
 export const App = () => {
-  const toast = useToast()
-  const alert = (title: string, description?: string) => {
-    toast({ status: "error", position: "top", title, description })
-  }
+  const bgColor = useColorModeValue("white", "black.100")
+  const { alert } = useModals()
 
   const [sqlite, setSQLite] = useState<SqlJsStatic>()
   const [db, setDB] = useState<Database>()
@@ -44,8 +42,7 @@ export const App = () => {
 
           if (results.errors?.length)
             return alert(
-              `${results.errors.length} error(s)`,
-              String(results.errors[0])
+              `${results.errors.length} error(s): ${results.errors[0]}`
             )
 
           const header = results.data.shift() as string[]
@@ -143,25 +140,31 @@ export const App = () => {
       display="flex"
       flexDirection="column"
       fontFamily="Menlo, monospace"
-      bg={"black"}
+      bg={bgColor}
     >
       <input {...getInputProps()} />
 
       <Box as="header">
         <HStack p={1}>
           <Editor
-            height="50px"
+            height="75px"
             defaultValue={query}
             defaultLanguage="sql"
             theme="vs-dark"
             onChange={(value) => setQuery(value || "")}
             options={{
               fontSize: 16,
+              fontFamily:
+                'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+              lineNumbers: "off",
+              renderLineHighlight: false,
+              scrollbar: {
+                vertical: "hidden",
+                verticalScrollbarSize: 7,
+              },
               minimap: {
                 enabled: false,
               },
-              lineNumbers: "off",
-              renderLineHighlight: false,
             }}
           />
         </HStack>
@@ -194,13 +197,8 @@ export const App = () => {
 
 export default function Page() {
   return (
-    <>
+    <ModalProvider>
       <App />
-      <NextSeo
-        title="csvhacker - an SQL-powered CSV browser"
-        description="A SQL-powered tool to quickly view, filter, map, and reduce CSV/TSV files in the browser. Shareable links for easy collaboration with non-engineers"
-        additionalLinkTags={[{ rel: "icon", href: "/favicon.png" }]}
-      />
-    </>
+    </ModalProvider>
   )
 }
