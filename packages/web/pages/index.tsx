@@ -9,6 +9,7 @@ import { useDropzone } from "react-dropzone"
 import slugify from "slugify"
 import initSqlJs, { Database, QueryExecResult, SqlJsStatic } from "sql.js"
 import pluralize from "pluralize"
+import fetch from "unfetch"
 
 const DEFAULT_QUERY = "select * from data"
 
@@ -95,6 +96,13 @@ export const App = () => {
     [sqlite]
   )
 
+  useEffect(() => {
+    if (!sqlite) return
+    fetch("https://csv.statico.io/100.csv")
+      .then((res) => res.blob())
+      .then((blob) => onDrop([new File([blob], "file.csv")]))
+  }, [sqlite])
+
   const [results, setResults] = useState<QueryExecResult>()
   useEffect(() => {
     if (!db) return
@@ -136,6 +144,11 @@ export const App = () => {
       flexDirection="column"
     >
       <Input {...getInputProps()} size="md" />
+      <style jsx global>{`
+        body {
+          font-family: Menlo, monospace;
+        }
+      `}</style>
 
       <Box as="header">
         <HStack>

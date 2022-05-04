@@ -27,7 +27,8 @@
     "react-dropzone": "^14.2.0",
     "recoil": "^0.7.2",
     "slugify": "^1.6.5",
-    "sql.js": "^1.6.2"
+    "sql.js": "^1.6.2",
+    "unfetch": "^4.2.0"
   },
   "devDependencies": {
     "@types/next": "^9.0.0",
